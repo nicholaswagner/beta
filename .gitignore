@@ -16,3 +16,4 @@ public/*
 # Ignore all dotfiles except .gitignore
 .*
 !.gitignore
+!.github
