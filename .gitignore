@@ -1,0 +1,18 @@
+node_modules
+
+# Build output
+build
+
+# Generated content (fumadocs-mdx + fumadocs-obsidian outputs)
+content
+
+# Generated assets from the vault (kept out of git; rebuilt by `bun run generate`).
+# Hand-authored assets, if any, should live elsewhere (e.g. /app/assets/) and be
+# imported through Vite — not dropped into /public.
+public/*
+!public/.nojekyll
+!public/.gitkeep
+
+# Ignore all dotfiles except .gitignore
+.*
+!.gitignore

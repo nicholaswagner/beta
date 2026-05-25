@@ -1,0 +1,137 @@
+/*
+ * App-wide resets + page background.
+ *
+ * `var(--color-background)` and `var(--gray-12)` are published by Radix Themes
+ * on the `<Theme>` root element, and they re-evaluate whenever appearance
+ * flips between "light" and "dark". Painting `html`/`body` with these
+ * variables means the page background follows the ThemeContext toggle for
+ * free — no extra wiring.
+ *
+ * Without this, the default white `<body>` shows around the Radix `<Theme>`
+ * div in dark mode.
+ */
+
+ @keyframes theme-flicker {
+   0% {
+     filter: none;
+   } /* current theme */
+   25% {
+     filter: grayscale(1) brightness(1);
+   } /* neutral gray */
+   50% {
+     filter: grayscale(1) brightness(0);
+   }
+   100% {
+     filter: grayscale(1) brightness(1);
+   }
+   /* reveal new theme */
+ }
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-background);
+  color: var(--gray-12);
+  min-height: 100%;
+  transition: var(--transition-stuff);
+  
+  @media print {
+		height: 100%;
+		width: 100%;
+		opacity: 1;
+		transition: none;
+		margin: 0;
+		padding: 0;
+	}
+}
+
+html {
+  /* Smooth in-page anchor scrolls (matches our useHashScroll handler). */
+  scroll-behavior: smooth;
+}
+
+
+:root {
+	--transition-stuff: background-color 0.33s cubic-bezier(0.5, 1, 0.89, 1),
+	color 0.6s cubic-bezier(0.5, 1, 0.89, 1);
+}
+
+img {
+	opacity: 0;
+	transition: opacity 1.5s ease, color 1.5s ease;
+	animation: triggerTransition 1.5s ease 0.5s forwards;
+}
+
+@keyframes triggerTransition {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.radix-themes {
+	margin: 0;
+	padding: 0;
+	transition: var(--transition-stuff);
+	/* transition: 1.6s ease-out, color 1.6s ease-out; */
+	--heading-font-size-adjust: 1.05;
+	--heading-font-style: normal;
+	--heading-leading-trim-start: 0.42em;
+	--heading-leading-trim-end: 0.38em;
+	--heading-letter-spacing: -0.01em;
+	--cursor-button: pointer !important;
+	--cursor-checkbox: default;
+	--cursor-disabled: not-allowed;
+	--cursor-link: pointer;
+	--cursor-menu-item: default;
+	--cursor-radio: default;
+	--cursor-slider-thumb: default;
+	--cursor-slider-thumb-active: default;
+	--cursor-switch: pointer !important;
+
+	@media print {
+		--scaling: 0.75;
+		--font-size-1: calc(8px * var(--scaling));
+		--font-size-2: calc(10px * var(--scaling));
+		--font-size-3: calc(12px * var(--scaling));
+		--font-size-4: calc(14px * var(--scaling));
+		--font-size-5: calc(16px * var(--scaling));
+		--font-size-6: calc(20px * var(--scaling));
+		--font-size-7: calc(24px * var(--scaling));
+		--font-size-8: calc(31px * var(--scaling));
+		--font-size-9: calc(56px * var(--scaling));
+
+		--line-height-1: calc(12px * var(--scaling));
+		--line-height-2: calc(16px * var(--scaling));
+		--line-height-3: calc(20px * var(--scaling));
+		--line-height-4: calc(22px * var(--scaling));
+		--line-height-5: calc(24px * var(--scaling));
+		--line-height-6: calc(26px * var(--scaling));
+		--line-height-7: calc(32px * var(--scaling));
+		--line-height-8: calc(36px * var(--scaling));
+		--line-height-9: calc(56px * var(--scaling));
+
+		--space-1: calc(2px * var(--scaling));
+		--space-2: calc(4px * var(--scaling));
+		--space-3: calc(8px * var(--scaling));
+		--space-4: calc(12px * var(--scaling));
+		--space-5: calc(20px * var(--scaling));
+		--space-6: calc(28px * var(--scaling));
+		--space-7: calc(36px * var(--scaling));
+		--space-8: calc(44px * var(--scaling));
+		--space-9: calc(60px * var(--scaling));
+
+		--heading-line-height-1: calc(12px * var(--scaling));
+		--heading-line-height-2: calc(14px * var(--scaling));
+		--heading-line-height-3: calc(18px * var(--scaling));
+		--heading-line-height-4: calc(20px * var(--scaling));
+		--heading-line-height-5: calc(22px * var(--scaling));
+		--heading-line-height-6: calc(26px * var(--scaling));
+		--heading-line-height-7: calc(32px * var(--scaling));
+		--heading-line-height-8: calc(36px * var(--scaling));
+		--heading-line-height-9: calc(56px * var(--scaling));
+	}
+}

@@ -1,0 +1,37 @@
+{
+  "name": "nicholaswagner-beta",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate": "bun scripts/generate.ts",
+    "postinstall": "fumadocs-mdx",
+    "dev": "react-router dev",
+    "build": "bun run generate && bun scripts/build-search-index.ts && react-router build && cp build/client/index.html build/client/404.html && touch build/client/.nojekyll",
+    "preview": "bunx serve build/client -l 5174",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@orama/orama": "^3.1.18",
+    "@radix-ui/themes": "^3.3.0",
+    "@react-router/node": "^7.15.0",
+    "fumadocs-core": "^16.9.1",
+    "fumadocs-mdx": "^15.0.8",
+    "fumadocs-obsidian": "^0.1.0",
+    "fumadocs-ui": "^16.9.1",
+    "isbot": "^5.1.17",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router": "^7.5.0"
+  },
+  "devDependencies": {
+    "@react-router/dev": "^7.15.0",
+    "@types/bun": "latest",
+    "@types/path-browserify": "^1.0.3",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "path-browserify": "^1.0.1",
+    "typescript": "^5.6.0",
+    "vite": "^8.0.14",
+    "vite-tsconfig-paths": "^5.1.0"
+  }
+}
