@@ -26,6 +26,10 @@ A bullet list
 
 <mark> Highlighted text </mark>
 
+> [!note] Callout
+
+---
+
 <Callout type="success">A success callout!</Callout>
 <Callout type="info">An info callout!</Callout>
 <Callout type="warn">A warning callout!</Callout>

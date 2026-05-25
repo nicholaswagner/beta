@@ -13,6 +13,7 @@ import {
 import { Link as RouterLink } from 'react-router';
 import type { MDXComponents } from 'mdx/types';
 import { ScrambleText } from '~/components/ui/scrambleText';
+import { buildCallout, buildObsidianCallout, buildObsidianCalloutBody, buildObsidianCalloutTitle } from '~/lib/mdx-callout-builders';
 
 /**
  * Prefix root-absolute URLs with Vite's `import.meta.env.BASE_URL` so assets
@@ -100,41 +101,24 @@ export function getMDXComponents(extra?: MDXComponents): MDXComponents {
     th: (p) => <Table.ColumnHeaderCell {...p} />,
     td: (p) => <Table.Cell {...p} />,
     img: (p) => (
-      <img
+      <div className="image-container"><img
         {...p}
         src={withBase(p.src)}
         style={{ maxWidth: '100%', borderRadius: 'var(--radius-3)', ...p.style }}
         alt={p.alt ?? ''}
-      />
+      /></div>
     ),
-    Callout: ({ type, children }: { type?: string; children?: React.ReactNode }) => (
-      <Callout.Root color={mapCalloutColor(type)} my="3">
-        <Callout.Text>{children}</Callout.Text>
-      </Callout.Root>
-    ),
+    Callout: buildCallout,
+    ObsidianCallout: buildObsidianCallout,
+    ObsidianCalloutTitle: buildObsidianCalloutTitle,
+    ObsidianCalloutBody: buildObsidianCalloutBody,
+
     // Custom components reachable from vault `.md` as bare JSX, e.g.
     // `<ScrambleText>headline</ScrambleText>`. PascalCase is required for
     // the MDX parser to treat them as components rather than HTML tags.
     ScrambleText,
     ...extra,
   };
-}
-
-function mapCalloutColor(type?: string): React.ComponentProps<typeof Callout.Root>['color'] {
-  switch (type?.toLowerCase()) {
-    case 'warn':
-    case 'warning':
-      return 'amber';
-    case 'error':
-    case 'danger':
-      return 'red';
-    case 'success':
-    case 'tip':
-      return 'green';
-    case 'info':
-    default:
-      return 'iris';
-  }
 }
 
 /** Stable module-level instance — use this for the no-extras case. */
