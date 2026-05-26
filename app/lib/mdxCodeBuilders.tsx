@@ -16,7 +16,10 @@ import { CodeBlock, Pre } from 'fumadocs-ui/components/codeblock';
 export function buildCode(p: React.ComponentProps<'code'>) {
   const isBlock = typeof p.className === 'string' && /(?:^|\s)language-/.test(p.className);
   if (isBlock) return <code {...p} />;
-  return <Code variant="ghost" {...p} />;
+  // Strip native `color?: string` from the spread — Radix Code wants a
+  // restricted union and we don't use the native one here.
+  const { color: _color, ...rest } = p;
+  return <Code variant="ghost" {...rest} />;
 }
 
 /**
@@ -32,14 +35,33 @@ export function buildCode(p: React.ComponentProps<'code'>) {
  * If the fence has an explicit `title="..."` in the meta, fumadocs-mdx
  * forwards it as a `title` prop on the `<pre>` and we honor it over the
  * extracted language.
+ *
+ * Per-block opt-outs (lifted from fence meta in `source.config.ts`):
+ *   - `data-no-header` → suppress the title bar (no language label)
+ *   - `data-no-copy`   → suppress the copy button
+ *
+ * Setting both gives the minimal mode: syntax-highlighted code with no chrome.
  */
-export function buildPre(p: React.ComponentProps<'pre'> & { title?: string }) {
-  const { title, children, ...rest } = p;
+type PreProps = React.ComponentProps<'pre'> & {
+  title?: string;
+  'data-no-copy'?: boolean | string;
+  'data-no-header'?: boolean | string;
+};
+
+export function buildPre(p: PreProps) {
+  const {
+    title,
+    children,
+    'data-no-copy': noCopy,
+    'data-no-header': noHeader,
+    ...rest
+  } = p;
   const detectedLang = extractCodeLanguage(children);
-  const headerTitle = title ?? detectedLang;
+  const headerTitle = noHeader ? undefined : (title ?? detectedLang);
+  const allowCopy = !noCopy;
 
   return (
-    <CodeBlock {...rest} title={headerTitle}>
+    <CodeBlock {...rest} title={headerTitle} allowCopy={allowCopy}>
       <Pre>{children}</Pre>
     </CodeBlock>
   );

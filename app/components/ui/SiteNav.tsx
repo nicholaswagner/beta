@@ -5,7 +5,7 @@ import { useState } from "react";
 import { NW } from "./NW";
 import { useTheme } from "./ThemeContext";
 // import { BreadCrumbs } from "../breadcrumbs/BreadCrumbs";
-import { ThemeToggle } from "./theme-toggle/ThemeToggle";
+import { ThemeToggle } from "./ThemeToggle/ThemeToggle";
 
 export const SiteNav = () => {
 	const { theme } = useTheme();

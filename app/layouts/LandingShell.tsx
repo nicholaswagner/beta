@@ -5,7 +5,7 @@ import type * as PageTree from 'fumadocs-core/page-tree';
 import type { TOCItemType } from 'fumadocs-core/toc';
 import { Sidebar } from '../components/Sidebar';
 import { DocsTOC } from '../components/TOC';
-import { SiteNav } from '~/components/ui/site-nav';
+import { SiteNav } from '~/components/ui/SiteNav';
 
 interface LandingShellProps {
   pageTree?: PageTree.Root;

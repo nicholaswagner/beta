@@ -6,7 +6,7 @@
     "generate": "bun scripts/generate.ts",
     "postinstall": "fumadocs-mdx",
     "dev": "react-router dev",
-    "build": "bun run generate && bun scripts/build-search-index.ts && react-router build && cp build/client/index.html build/client/404.html && touch build/client/.nojekyll",
+    "build": "bun run generate && bun scripts/buildSearchIndex.ts && react-router build && cp build/client/index.html build/client/404.html && touch build/client/.nojekyll",
     "preview": "bunx serve build/client -l 5174",
     "typecheck": "tsc --noEmit"
   },

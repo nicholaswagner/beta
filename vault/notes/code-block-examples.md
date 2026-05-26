@@ -7,36 +7,21 @@ description: Reference for shiki transformer syntax — line highlighting, diffs
 
 A working reference for every shiki transformer we can wire up. The **fence syntax** snippets below are what you'd type in a vault note; the **live block** under each one is the same source rendered through fumadocs.
 
-> [!note] Most transformers aren't enabled yet
-> The visual effects (highlighted lines, diff markers, dimmed focus, etc.) only appear once the transformers are added to `rehypeCodeOptions.transformers` in `source.config.ts`. The fence syntax itself is harmless without them — comments just render as plain code comments.
-
----
-
 ## Language label
 
-Already enabled. The title bar of every code block shows the language id from the fence. Override it with `title="..."`.
+The title bar of every code block shows the language id from the fence. Override it with `title="..."`.
 
 ### Fence syntax
 
-````md
-```ts
-const greeting: string = 'hello'
-```
-
-```bash title="install.sh"
+```bash data-no-header data-no-copy
+# ```bash data-no-header data-no-copy
 bun add lucide-react
 ```
-````
-
-### Live
-
-```ts
-const greeting: string = 'hello'
-```
-
 ```bash title="install.sh"
+# ```bash title="install.sh"
 bun add lucide-react
 ```
+
 
 ---
 
@@ -220,6 +205,45 @@ const main = () => after()     // [!code focus]
 function before() { return 1 } // [!code --]
 function after() { return 2 }  // [!code ++]
 const main = () => after()     // [!code focus]
+```
+
+---
+
+## Per-block chrome opt-outs (`data-no-header`, `data-no-copy`)
+
+Two fence-meta flags let you tone down the `<CodeBlock>` chrome for individual blocks. Set them on the fence line.
+
+| Flags | Result |
+|---|---|
+| (none) | Full: language label header + copy button |
+| `data-no-copy` | Language label header, no copy button |
+| `data-no-header` | No header bar, copy button still floats top-right |
+| `data-no-header data-no-copy` | Minimal: just the syntax-highlighted code |
+
+### Fence syntax
+
+````md
+```bash data-no-header data-no-copy
+# minimal mode — no chrome at all
+echo "hello"
+```
+````
+
+### Live
+
+```bash data-no-header data-no-copy
+# minimal mode — no chrome at all
+echo "hello"
+```
+
+```bash data-no-copy
+# header but no copy button
+echo "see, language label still here"
+```
+
+```bash data-no-header
+# copy button floats; no header
+echo "compact mode"
 ```
 
 ---

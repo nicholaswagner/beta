@@ -1,11 +1,11 @@
 import { useEffect, type ReactNode } from 'react';
 import { useLocation } from 'react-router';
-import { Box, Container, Flex, Heading, ScrollArea, Separator } from '@radix-ui/themes';
+import { Box, Container, Flex, Heading, ScrollArea, Separator, Em } from '@radix-ui/themes';
 import type * as PageTree from 'fumadocs-core/page-tree';
 import type { TOCItemType } from 'fumadocs-core/toc';
 import { Sidebar } from '../components/Sidebar';
 import { DocsTOC } from '../components/TOC';
-import { SiteNav } from '~/components/ui/site-nav';
+import { SiteNav } from '~/components/ui/SiteNav';
 
 interface DocsShellProps {
   pageTree: PageTree.Root;
@@ -66,9 +66,9 @@ export function DocsShell({ pageTree, toc, title, children }: DocsShellProps) {
 
       <Box flexGrow="1" px="6" py="6" style={{ minWidth: 0 }}>
         <Container size="3">
-          <Heading as="h1" size="8" mb="5">
+          <Em>
             {title}
-          </Heading>
+          </Em>
           {children}
         </Container>
       </Box>

@@ -2,9 +2,9 @@ import { Text } from "@radix-ui/themes";
 import type { TextProps } from "@radix-ui/themes";
 import { Children, useEffect, useRef } from "react";
 import type { CSSProperties, ReactNode } from "react";
-import type { ScrambleOptions } from "../hooks/useScrambleText";
-import { useScrambleText } from "../hooks/useScrambleText";
-import { useTheme } from "../ui/ThemeContext";
+import type { ScrambleOptions } from "~/hooks/useScrambleText";
+import { useScrambleText } from "~/hooks/useScrambleText";
+import { useTheme } from "./ThemeContext";
 
 const defaults: ScrambleOptions = {
 	autoPlay: true,

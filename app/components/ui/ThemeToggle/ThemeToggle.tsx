@@ -1,9 +1,9 @@
 import { Moon, Sun } from "lucide-react";
 import { Switch } from "radix-ui";
 import { type Component, forwardRef } from "react";
-import { debounce } from "../../../utils/debounce";
+import { debounce } from "~/utils/debounce";
 import { useTheme } from "../ThemeContext";
-import styles from "./styles.module.css";
+import styles from "./ThemeToggle.module.css";
 
 interface ThemeToggleProps extends Partial<Component<typeof Switch>> {
 	checked?: boolean;

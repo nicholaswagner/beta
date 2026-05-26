@@ -7,7 +7,7 @@ import {
   type MetaFunction,
 } from 'react-router';
 import { source } from '~/lib/source';
-import { mdxComponents } from '~/lib/mdx-components';
+import { mdxComponents } from '~/lib/mdxComponents';
 import { DocsShell } from '~/layouts/DocsShell';
 
 export async function clientLoader({ params }: ClientLoaderFunctionArgs) {

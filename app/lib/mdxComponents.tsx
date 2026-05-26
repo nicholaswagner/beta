@@ -12,9 +12,9 @@ import {
 } from '@radix-ui/themes';
 import { Link as RouterLink } from 'react-router';
 import type { MDXComponents } from 'mdx/types';
-import { ScrambleText } from '~/components/ui/scrambleText';
-import { buildCallout, buildObsidianCallout, buildObsidianCalloutBody, buildObsidianCalloutTitle } from '~/lib/mdx-callout-builders';
-import { buildCode, buildPre } from '~/lib/mdx-code-builders';
+import { ScrambleText } from '~/components/ui/ScrambleText';
+import { buildCallout, buildObsidianCallout, buildObsidianCalloutBody, buildObsidianCalloutTitle } from '~/lib/mdxCalloutBuilders';
+import { buildCode, buildPre } from '~/lib/mdxCodeBuilders';
 /**
  * Prefix root-absolute URLs with Vite's `import.meta.env.BASE_URL` so assets
  * served from /public/ (which `fumadocs-obsidian` writes URLs for as

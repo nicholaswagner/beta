@@ -77,6 +77,28 @@ img {
 	padding: 0;
 	transition: var(--transition-stuff);
 	/* transition: 1.6s ease-out, color 1.6s ease-out; */
+
+	/*
+	 * Bridge fumadocs-ui's color tokens to Radix Themes' palette. fumadocs-ui
+	 * styles its shiki transformer effects (line highlight, errors, warnings,
+	 * word highlight) using `--color-fd-primary` and a few related variables.
+	 * Without this bridge they fall back to fumadocs-ui's defaults (white in
+	 * dark mode, near-invisible on the dark `--color-fd-card` background).
+	 *
+	 * Mapping these to Radix's accent palette means the transformer effects
+	 * pop in the same accent the rest of the site uses. The accent itself is
+	 * picked by ThemeContext; if it lands on `gray`, the effects will still
+	 * be subtle by design.
+	 */
+	--color-fd-primary: var(--accent-9);
+	--color-fd-foreground: var(--gray-12);
+	--color-fd-muted-foreground: var(--gray-11);
+	--color-fd-card: var(--gray-2);
+	--color-fd-ring: var(--accent-7);
+	--color-fd-accent-foreground: var(--accent-11);
+	--color-fd-border: var(--gray-6);
+	--color-fd-muted: var(--gray-3);
+
 	--heading-font-size-adjust: 1.05;
 	--heading-font-style: normal;
 	--heading-leading-trim-start: 0.42em;
@@ -148,6 +170,41 @@ img {
  */
 figure.shiki button {
   cursor: pointer;
+}
+
+/*
+ * Error / warning line styles for `// [!code error]` / `// [!code warning]`.
+ *
+ * The `transformerNotationErrorLevel` from @shikijs/transformers tags lines
+ * with `.line.highlighted.error` / `.line.highlighted.warning`. fumadocs-ui's
+ * stylesheet only styles `.highlighted` (the generic line highlight), so
+ * errors and warnings fall back to that color. Distinguish them here using
+ * Radix's red and amber palettes — soft step-3/4 alpha for the row tint,
+ * step-9 for the gutter accent bar.
+ *
+ * Specificity beats fumadocs-ui's `.highlighted` rule because we add a class
+ * (3 vs 2). Both light and dark themes track Radix's variables automatically.
+ */
+.shiki .line.highlighted.error {
+  background-color: var(--red-a3);
+  box-shadow: inset 2px 0 0 var(--red-9);
+}
+.shiki .line.highlighted.error::before {
+  content: '✕';
+  color: var(--red-9);
+  position: absolute;
+  left: calc(var(--spacing) * 1.5);
+}
+
+.shiki .line.highlighted.warning {
+  background-color: var(--amber-a3);
+  box-shadow: inset 2px 0 0 var(--amber-9);
+}
+.shiki .line.highlighted.warning::before {
+  content: '⚠';
+  color: var(--amber-9);
+  position: absolute;
+  left: calc(var(--spacing) * 1.5);
 }
 
 /* The .image-container class needs to be applied to a div wrapped around the image you want to apply this filter to */

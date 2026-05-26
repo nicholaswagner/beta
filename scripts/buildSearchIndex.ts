@@ -22,7 +22,7 @@ await writeFile(
   join('public', 'search-index.json'),
   JSON.stringify({
     version: 1,
-    note: 'placeholder — see scripts/build-search-index.ts',
+    note: 'placeholder — see scripts/buildSearchIndex.ts',
     documents: [],
   }),
 );
