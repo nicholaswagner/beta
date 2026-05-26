@@ -7,24 +7,38 @@ import {
 import type { ShikiTransformer } from 'shiki';
 
 /**
- * Lift `data-no-copy` / `data-no-header` fence-meta flags onto the rendered
- * `<pre>` element. The defaults' `parseMetaString` parks the rest of the meta
- * string (after `title=`, `tab=`, etc.) into `meta.__raw`, which is what we
- * read here.
+ * Lift our custom fence-meta flags + the upstream `lineNumbers` directive
+ * onto the rendered `<pre>` element so they survive shiki's tree rewrite.
  *
- * `buildPre` (app/lib/mdxCodeBuilders.tsx) consumes the resulting props to
- * suppress the title bar / copy button on a per-block basis.
+ *   - `data-no-copy` / `data-no-header`: parsed from `meta.__raw` (the
+ *     remainder after fumadocs's default `parseMetaString` strips `title=`,
+ *     `tab=`, etc.).
+ *   - `data-line-numbers` / `data-line-numbers-start`: already set into
+ *     `meta` by fumadocs's default `parseMetaString` when it sees the
+ *     `lineNumbers` keyword. We just copy them onto `pre.properties` because
+ *     fumadocs-core doesn't ship a transformer that does it for us.
+ *
+ * `buildPre` (app/lib/mdxCodeBuilders.tsx) consumes the resulting props.
  */
 function transformerLiftFumaFlags(): ShikiTransformer {
   return {
     name: 'fuma-lift-flags',
     pre(node) {
-      const raw = String(this.options.meta?.__raw ?? '');
+      const meta = this.options.meta ?? {};
+      const raw = String(meta.__raw ?? '');
+
       if (/(?:^|\s)data-no-copy(?:\s|$)/.test(raw)) {
         node.properties['data-no-copy'] = true;
       }
       if (/(?:^|\s)data-no-header(?:\s|$)/.test(raw)) {
         node.properties['data-no-header'] = true;
+      }
+
+      if (meta['data-line-numbers']) {
+        node.properties['data-line-numbers'] = true;
+      }
+      if (typeof meta['data-line-numbers-start'] === 'number') {
+        node.properties['data-line-numbers-start'] = meta['data-line-numbers-start'];
       }
     },
   };

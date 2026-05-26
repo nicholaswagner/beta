@@ -37,15 +37,20 @@ export function buildCode(p: React.ComponentProps<'code'>) {
  * extracted language.
  *
  * Per-block opt-outs (lifted from fence meta in `source.config.ts`):
- *   - `data-no-header` → suppress the title bar (no language label)
- *   - `data-no-copy`   → suppress the copy button
+ *   - `data-no-header`        → suppress the title bar (no language label)
+ *   - `data-no-copy`          → suppress the copy button
+ *   - `lineNumbers`           → render with line numbers
+ *   - `lineNumbers=N`         → line numbers starting at N
  *
- * Setting both gives the minimal mode: syntax-highlighted code with no chrome.
+ * Setting both no-* flags gives the minimal mode: syntax-highlighted code
+ * with no chrome.
  */
 type PreProps = React.ComponentProps<'pre'> & {
   title?: string;
   'data-no-copy'?: boolean | string;
   'data-no-header'?: boolean | string;
+  'data-line-numbers'?: boolean | string;
+  'data-line-numbers-start'?: number | string;
 };
 
 export function buildPre(p: PreProps) {
@@ -54,6 +59,8 @@ export function buildPre(p: PreProps) {
     children,
     'data-no-copy': noCopy,
     'data-no-header': noHeader,
+    'data-line-numbers': lineNumbers,
+    'data-line-numbers-start': lineNumbersStart,
     ...rest
   } = p;
   const detectedLang = extractCodeLanguage(children);
@@ -61,7 +68,17 @@ export function buildPre(p: PreProps) {
   const allowCopy = !noCopy;
 
   return (
-    <CodeBlock {...rest} title={headerTitle} allowCopy={allowCopy}>
+    <CodeBlock
+      {...rest}
+      title={headerTitle}
+      allowCopy={allowCopy}
+      data-line-numbers={lineNumbers ? true : undefined}
+      data-line-numbers-start={
+        typeof lineNumbersStart === 'string'
+          ? Number(lineNumbersStart)
+          : lineNumbersStart
+      }
+    >
       <Pre>{children}</Pre>
     </CodeBlock>
   );

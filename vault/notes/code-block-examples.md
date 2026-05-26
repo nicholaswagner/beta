@@ -55,27 +55,37 @@ const e = 5
 
 ## Line numbers
 
-Not a transformer — a `<CodeBlock data-line-numbers>` attribute. We can opt in per-fence with a `{data-line-numbers}` meta directive, or flip it on globally in `buildPre` so every block is numbered.
+Not a transformer — fumadocs's default `parseMetaString` recognizes a `lineNumbers` keyword in the fence meta and turns it into a `data-line-numbers` prop on the rendered `<CodeBlock>`. `lineNumbers=N` starts the count at N.
 
 ### Fence syntax
 
 ````md
-```ts {data-line-numbers}
+```ts lineNumbers
 function add(a: number, b: number) {
   return a + b
+}
+```
+
+```ts lineNumbers=42
+function startsAtFortyTwo() {
+  return 'see line numbers on the side'
 }
 ```
 ````
 
 ### Live
 
-```ts
+```ts lineNumbers
 function add(a: number, b: number) {
   return a + b
 }
 ```
 
-(The live block above won't show numbers until we wire `data-line-numbers` through `buildPre`.)
+```ts lineNumbers=42
+function startsAtFortyTwo() {
+  return 'see line numbers on the side'
+}
+```
 
 ---
 
