@@ -5,14 +5,15 @@ import {
   useRouteError,
   type ClientLoaderFunctionArgs,
   type MetaFunction,
-} from 'react-router';
-import { source } from '~/lib/source';
-import { mdxComponents } from '~/lib/mdxComponents';
-import { DocsShell } from '~/layouts/DocsShell';
+} from "react-router";
+
+import { DocsShell } from "~/layouts/DocsShell";
+import { mdxComponents } from "~/lib/mdxComponents";
+import { source } from "~/lib/source";
 
 export async function clientLoader({ params }: ClientLoaderFunctionArgs) {
-  const splat = params['*'] ?? '';
-  const slugs = splat.split('/').filter(Boolean);
+  const splat = params["*"] ?? "";
+  const slugs = splat.split("/").filter(Boolean);
   const page = source.getPage(slugs);
   if (!page) {
     throw data({ message: `No page at /${splat}` }, { status: 404 });
@@ -27,10 +28,10 @@ export async function clientLoader({ params }: ClientLoaderFunctionArgs) {
 }
 
 export const meta: MetaFunction<typeof clientLoader> = ({ data }) => {
-  if (!data) return [{ title: 'Not found' }];
+  if (!data) return [{ title: "Not found" }];
   return [
     { title: data.title },
-    ...(data.description ? [{ name: 'description', content: data.description }] : []),
+    ...(data.description ? [{ name: "description", content: data.description }] : []),
   ];
 };
 

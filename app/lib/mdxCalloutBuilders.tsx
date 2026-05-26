@@ -1,5 +1,4 @@
 import { Callout, Text } from "@radix-ui/themes";
-
 import {
   Bomb,
   CheckIcon,

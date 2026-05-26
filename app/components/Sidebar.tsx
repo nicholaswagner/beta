@@ -1,6 +1,6 @@
-import { Box, Link as RLink, Text } from '@radix-ui/themes';
-import { NavLink } from 'react-router';
-import type * as PageTree from 'fumadocs-core/page-tree';
+import { Box, Link as RLink, Text } from "@radix-ui/themes";
+import type * as PageTree from "fumadocs-core/page-tree";
+import { NavLink } from "react-router";
 
 export function Sidebar({ tree }: { tree: PageTree.Root }) {
   return (
@@ -13,9 +13,9 @@ export function Sidebar({ tree }: { tree: PageTree.Root }) {
 function TreeNodes({ nodes, depth }: { nodes: PageTree.Node[]; depth: number }) {
   return (
     <Box asChild>
-      <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+      <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
         {nodes.map((node, i) => (
-          <li key={i} style={{ marginLeft: depth === 0 ? 0 : '0.75rem' }}>
+          <li key={i} style={{ marginLeft: depth === 0 ? 0 : "0.75rem" }}>
             <TreeNode node={node} depth={depth} />
           </li>
         ))}
@@ -25,7 +25,7 @@ function TreeNodes({ nodes, depth }: { nodes: PageTree.Node[]; depth: number }) 
 }
 
 function TreeNode({ node, depth }: { node: PageTree.Node; depth: number }) {
-  if (node.type === 'separator') {
+  if (node.type === "separator") {
     return (
       <Text size="1" weight="bold" color="gray" mt="3" mb="1" as="div">
         {flattenName(node.name)}
@@ -33,7 +33,7 @@ function TreeNode({ node, depth }: { node: PageTree.Node; depth: number }) {
     );
   }
 
-  if (node.type === 'folder') {
+  if (node.type === "folder") {
     return (
       <Box my="1">
         {node.index ? (
@@ -51,18 +51,18 @@ function TreeNode({ node, depth }: { node: PageTree.Node; depth: number }) {
   return <PageLink url={node.url} name={node.name} />;
 }
 
-function PageLink({ url, name }: { url: string; name: PageTree.Node['name'] }) {
+function PageLink({ url, name }: { url: string; name: PageTree.Node["name"] }) {
   return (
     <RLink asChild size="2">
       <NavLink
         to={url}
         end
         style={({ isActive }) => ({
-          display: 'block',
-          padding: '0.25rem 0',
-          color: isActive ? 'var(--accent-11)' : 'var(--gray-12)',
+          display: "block",
+          padding: "0.25rem 0",
+          color: isActive ? "var(--accent-11)" : "var(--gray-12)",
           fontWeight: isActive ? 600 : 400,
-          textDecoration: 'none',
+          textDecoration: "none",
         })}
       >
         {flattenName(name)}
@@ -71,8 +71,8 @@ function PageLink({ url, name }: { url: string; name: PageTree.Node['name'] }) {
   );
 }
 
-function flattenName(name: PageTree.Node['name']): string {
-  if (typeof name === 'string') return name;
+function flattenName(name: PageTree.Node["name"]): string {
+  if (typeof name === "string") return name;
   // ReactNode fallback — render as-is when string coercion fails.
-  return String(name ?? '');
+  return String(name ?? "");
 }

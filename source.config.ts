@@ -1,10 +1,7 @@
-import { defineDocs, defineConfig } from 'fumadocs-mdx/config';
-import { rehypeCodeDefaultOptions } from 'fumadocs-core/mdx-plugins';
-import {
-  transformerNotationErrorLevel,
-  transformerMetaHighlight,
-} from '@shikijs/transformers';
-import type { ShikiTransformer } from 'shiki';
+import { transformerNotationErrorLevel, transformerMetaHighlight } from "@shikijs/transformers";
+import { rehypeCodeDefaultOptions } from "fumadocs-core/mdx-plugins";
+import { defineDocs, defineConfig } from "fumadocs-mdx/config";
+import type { ShikiTransformer } from "shiki";
 
 /**
  * Lift our custom fence-meta flags + the upstream `lineNumbers` directive
@@ -22,30 +19,30 @@ import type { ShikiTransformer } from 'shiki';
  */
 function transformerLiftFumaFlags(): ShikiTransformer {
   return {
-    name: 'fuma-lift-flags',
+    name: "fuma-lift-flags",
     pre(node) {
       const meta = this.options.meta ?? {};
-      const raw = String(meta.__raw ?? '');
+      const raw = String(meta.__raw ?? "");
 
       if (/(?:^|\s)data-no-copy(?:\s|$)/.test(raw)) {
-        node.properties['data-no-copy'] = true;
+        node.properties["data-no-copy"] = true;
       }
       if (/(?:^|\s)data-no-header(?:\s|$)/.test(raw)) {
-        node.properties['data-no-header'] = true;
+        node.properties["data-no-header"] = true;
       }
 
-      if (meta['data-line-numbers']) {
-        node.properties['data-line-numbers'] = true;
+      if (meta["data-line-numbers"]) {
+        node.properties["data-line-numbers"] = true;
       }
-      if (typeof meta['data-line-numbers-start'] === 'number') {
-        node.properties['data-line-numbers-start'] = meta['data-line-numbers-start'];
+      if (typeof meta["data-line-numbers-start"] === "number") {
+        node.properties["data-line-numbers-start"] = meta["data-line-numbers-start"];
       }
     },
   };
 }
 
 export const docs = defineDocs({
-  dir: 'content',
+  dir: "content",
   docs: {
     postprocess: {
       includeProcessedMarkdown: true,
@@ -79,8 +76,8 @@ export default defineConfig({
       transformers: [
         ...(rehypeCodeDefaultOptions.transformers ?? []),
         transformerNotationErrorLevel(), // `// [!code error]` / `// [!code warning]`
-        transformerMetaHighlight(),      // fence meta `{1,3-5}`
-        transformerLiftFumaFlags(),      // reads `data-no-copy` / `data-no-header`
+        transformerMetaHighlight(), // fence meta `{1,3-5}`
+        transformerLiftFumaFlags(), // reads `data-no-copy` / `data-no-header`
       ],
     },
   },

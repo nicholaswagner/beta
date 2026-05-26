@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react';
+import { ReactRouterProvider } from "fumadocs-core/framework/react-router";
+import type { ReactNode } from "react";
 import {
   Links,
   Meta,
@@ -7,12 +8,13 @@ import {
   ScrollRestoration,
   isRouteErrorResponse,
   useRouteError,
-} from 'react-router';
-import { ReactRouterProvider } from 'fumadocs-core/framework/react-router';
-import { ThemeProvider } from './components/ui/ThemeContext';
-import '@radix-ui/themes/styles.css';
-import 'fumadocs-ui/style.css';
-import './styles/global.css';
+} from "react-router";
+
+import { ThemeProvider } from "./components/ui/ThemeContext";
+import "@radix-ui/themes/styles.css";
+import "fumadocs-ui/style.css";
+
+import "./styles/global.css";
 
 export function Layout({ children }: { children: ReactNode }) {
   return (
@@ -25,9 +27,7 @@ export function Layout({ children }: { children: ReactNode }) {
       </head>
       <body>
         <ReactRouterProvider>
-          <ThemeProvider>
-            {children}
-          </ThemeProvider>
+          <ThemeProvider>{children}</ThemeProvider>
         </ReactRouterProvider>
         <ScrollRestoration />
         <Scripts />
@@ -46,9 +46,9 @@ export function ErrorBoundary() {
     ? `${error.status} ${error.statusText}`
     : error instanceof Error
       ? error.message
-      : 'Unknown error';
+      : "Unknown error";
   return (
-    <main style={{ padding: '2rem', fontFamily: 'system-ui' }}>
+    <main style={{ padding: "2rem", fontFamily: "system-ui" }}>
       <h1>Something went wrong</h1>
       <p>{message}</p>
     </main>

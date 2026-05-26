@@ -109,11 +109,6 @@ export function getMDXComponents(extra?: MDXComponents): MDXComponents {
 }
 ```
 
-
-
-
-
-
 ```bash
 .
 ├── app

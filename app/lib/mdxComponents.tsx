@@ -1,4 +1,3 @@
-import type { ComponentPropsWithoutRef } from 'react';
 import {
   Blockquote,
   Callout,
@@ -9,12 +8,19 @@ import {
   Separator,
   Table,
   Text,
-} from '@radix-ui/themes';
-import { Link as RouterLink } from 'react-router';
-import type { MDXComponents } from 'mdx/types';
-import { ScrambleText } from '~/components/ui/ScrambleText';
-import { buildCallout, buildObsidianCallout, buildObsidianCalloutBody, buildObsidianCalloutTitle } from '~/lib/mdxCalloutBuilders';
-import { buildCode, buildPre } from '~/lib/mdxCodeBuilders';
+} from "@radix-ui/themes";
+import type { MDXComponents } from "mdx/types";
+import type { ComponentPropsWithoutRef } from "react";
+import { Link as RouterLink } from "react-router";
+
+import { ScrambleText } from "~/components/ui/ScrambleText";
+import {
+  buildCallout,
+  buildObsidianCallout,
+  buildObsidianCalloutBody,
+  buildObsidianCalloutTitle,
+} from "~/lib/mdxCalloutBuilders";
+import { buildCode, buildPre } from "~/lib/mdxCodeBuilders";
 /**
  * Prefix root-absolute URLs with Vite's `import.meta.env.BASE_URL` so assets
  * served from /public/ (which `fumadocs-obsidian` writes URLs for as
@@ -23,15 +29,15 @@ import { buildCode, buildPre } from '~/lib/mdxCodeBuilders';
  * already prefixed.
  */
 function withBase(src: string | undefined): string | undefined {
-  if (typeof src !== 'string' || src.length === 0) return src;
-  if (!src.startsWith('/')) return src; // relative, data:, http(s):, etc.
-  if (src.startsWith('//')) return src; // protocol-relative
+  if (typeof src !== "string" || src.length === 0) return src;
+  if (!src.startsWith("/")) return src; // relative, data:, http(s):, etc.
+  if (src.startsWith("//")) return src; // protocol-relative
   const base = import.meta.env.BASE_URL; // '/beta/' in this app
   if (src.startsWith(base)) return src;
-  return base.replace(/\/$/, '') + src;
+  return base.replace(/\/$/, "") + src;
 }
 
-function Anchor({ href = '#', children, color, ...rest }: ComponentPropsWithoutRef<'a'>) {
+function Anchor({ href = "#", children, color, ...rest }: ComponentPropsWithoutRef<"a">) {
   const isExternal = /^https?:\/\//.test(href);
   if (isExternal) {
     return (
@@ -64,7 +70,7 @@ export function getMDXComponents(extra?: MDXComponents): MDXComponents {
     p: (p) => <Text as="p" size="3" mb="3" {...p} />,
     a: Anchor,
     strong: (p) => <Text weight="bold" {...p} />,
-    em: (p) => <Text style={{ fontStyle: 'italic' }} {...p} />,
+    em: (p) => <Text style={{ fontStyle: "italic" }} {...p} />,
     // code: (p) => <Code variant="ghost" weight="light" {...p} />,
     code: (p) => buildCode(p),
     pre: (p) => buildPre(p),
@@ -73,15 +79,15 @@ export function getMDXComponents(extra?: MDXComponents): MDXComponents {
     blockquote: (p) => <Blockquote {...p} />,
     ul: (p) => (
       <Text as="div" size="3" mb="3" asChild>
-        <ul style={{ paddingLeft: '1.5rem', listStyleType: 'disc' }} {...p} />
+        <ul style={{ paddingLeft: "1.5rem", listStyleType: "disc" }} {...p} />
       </Text>
     ),
     ol: (p) => (
       <Text as="div" size="3" mb="3" asChild>
-        <ol style={{ paddingLeft: '1.5rem', listStyleType: 'decimal' }} {...p} />
+        <ol style={{ paddingLeft: "1.5rem", listStyleType: "decimal" }} {...p} />
       </Text>
     ),
-    li: (p) => <li style={{ marginBottom: '0.25rem' }} {...p} />,
+    li: (p) => <li style={{ marginBottom: "0.25rem" }} {...p} />,
     table: (p) => <Table.Root variant="surface" my="4" {...p} />,
     thead: (p) => <Table.Header {...p} />,
     tbody: (p) => <Table.Body {...p} />,
@@ -89,12 +95,14 @@ export function getMDXComponents(extra?: MDXComponents): MDXComponents {
     th: (p) => <Table.ColumnHeaderCell {...p} />,
     td: (p) => <Table.Cell {...p} />,
     img: (p) => (
-      <span className="image-container"><img
-        {...p}
-        src={withBase(p.src)}
-        style={{ maxWidth: '100%', borderRadius: 'var(--radius-3)', ...p.style }}
-        alt={p.alt ?? ''}
-      /></span>
+      <span className="image-container">
+        <img
+          {...p}
+          src={withBase(p.src)}
+          style={{ maxWidth: "100%", borderRadius: "var(--radius-3)", ...p.style }}
+          alt={p.alt ?? ""}
+        />
+      </span>
     ),
     Callout: buildCallout,
     ObsidianCallout: buildObsidianCallout,

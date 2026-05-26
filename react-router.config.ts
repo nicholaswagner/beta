@@ -1,4 +1,4 @@
-import type { Config } from '@react-router/dev/config';
+import type { Config } from "@react-router/dev/config";
 
 /**
  * SPA mode for GitHub Pages.
@@ -17,5 +17,5 @@ import type { Config } from '@react-router/dev/config';
  */
 export default {
   ssr: false,
-  basename: '/beta/',
+  basename: "/beta/",
 } satisfies Config;

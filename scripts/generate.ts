@@ -1,11 +1,11 @@
-import { fromVault } from 'fumadocs-obsidian';
+import { fromVault } from "fumadocs-obsidian";
 
 await fromVault({
-  dir: 'vault',
+  dir: "vault",
   out: {
-    contentDir: 'content',
-    publicDir: 'public',
+    contentDir: "content",
+    publicDir: "public",
   },
 });
 
-console.log('Generated MDX from vault.');
+console.log("Generated MDX from vault.");

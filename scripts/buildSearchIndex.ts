@@ -14,17 +14,17 @@
  * client-side using the same field names so the UI is portable.
  */
 
-import { mkdir, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { mkdir, writeFile } from "node:fs/promises";
+import { join } from "node:path";
 
-await mkdir('public', { recursive: true });
+await mkdir("public", { recursive: true });
 await writeFile(
-  join('public', 'search-index.json'),
+  join("public", "search-index.json"),
   JSON.stringify({
     version: 1,
-    note: 'placeholder — see scripts/buildSearchIndex.ts',
+    note: "placeholder — see scripts/buildSearchIndex.ts",
     documents: [],
   }),
 );
 
-console.log('Wrote placeholder search index to public/search-index.json');
+console.log("Wrote placeholder search index to public/search-index.json");

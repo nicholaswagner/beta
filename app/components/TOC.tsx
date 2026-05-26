@@ -1,6 +1,6 @@
-import { TOCProvider, TOCScrollArea, useTOCItems } from 'fumadocs-ui/components/toc';
-import { TOCItems, TOCItem, TOCEmpty } from 'fumadocs-ui/components/toc/default';
-import type { TOCItemType } from 'fumadocs-core/toc';
+import type { TOCItemType } from "fumadocs-core/toc";
+import { TOCProvider, TOCScrollArea, useTOCItems } from "fumadocs-ui/components/toc";
+import { TOCItems, TOCItem, TOCEmpty } from "fumadocs-ui/components/toc/default";
 
 /**
  * The single allowed Fumadocs UI surface in this app: a styled TOC rail with

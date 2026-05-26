@@ -1,6 +1,6 @@
-import { isValidElement, type ReactElement, type ReactNode } from 'react';
-import { Code } from '@radix-ui/themes';
-import { CodeBlock, Pre } from 'fumadocs-ui/components/codeblock';
+import { Code } from "@radix-ui/themes";
+import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";
+import { isValidElement, type ReactElement, type ReactNode } from "react";
 
 /**
  * MDX `code` mapping.
@@ -13,8 +13,8 @@ import { CodeBlock, Pre } from 'fumadocs-ui/components/codeblock';
  * `addLanguageClass: true` is set in `source.config.ts`. Inline code never
  * gets that class.
  */
-export function buildCode(p: React.ComponentProps<'code'>) {
-  const isBlock = typeof p.className === 'string' && /(?:^|\s)language-/.test(p.className);
+export function buildCode(p: React.ComponentProps<"code">) {
+  const isBlock = typeof p.className === "string" && /(?:^|\s)language-/.test(p.className);
   if (isBlock) return <code {...p} />;
   // Strip native `color?: string` from the spread — Radix Code wants a
   // restricted union and we don't use the native one here.
@@ -45,22 +45,22 @@ export function buildCode(p: React.ComponentProps<'code'>) {
  * Setting both no-* flags gives the minimal mode: syntax-highlighted code
  * with no chrome.
  */
-type PreProps = React.ComponentProps<'pre'> & {
+type PreProps = React.ComponentProps<"pre"> & {
   title?: string;
-  'data-no-copy'?: boolean | string;
-  'data-no-header'?: boolean | string;
-  'data-line-numbers'?: boolean | string;
-  'data-line-numbers-start'?: number | string;
+  "data-no-copy"?: boolean | string;
+  "data-no-header"?: boolean | string;
+  "data-line-numbers"?: boolean | string;
+  "data-line-numbers-start"?: number | string;
 };
 
 export function buildPre(p: PreProps) {
   const {
     title,
     children,
-    'data-no-copy': noCopy,
-    'data-no-header': noHeader,
-    'data-line-numbers': lineNumbers,
-    'data-line-numbers-start': lineNumbersStart,
+    "data-no-copy": noCopy,
+    "data-no-header": noHeader,
+    "data-line-numbers": lineNumbers,
+    "data-line-numbers-start": lineNumbersStart,
     ...rest
   } = p;
   const detectedLang = extractCodeLanguage(children);
@@ -74,9 +74,7 @@ export function buildPre(p: PreProps) {
       allowCopy={allowCopy}
       data-line-numbers={lineNumbers ? true : undefined}
       data-line-numbers-start={
-        typeof lineNumbersStart === 'string'
-          ? Number(lineNumbersStart)
-          : lineNumbersStart
+        typeof lineNumbersStart === "string" ? Number(lineNumbersStart) : lineNumbersStart
       }
     >
       <Pre>{children}</Pre>
@@ -88,7 +86,7 @@ function extractCodeLanguage(children: ReactNode): string | undefined {
   if (!isValidElement(children)) return undefined;
   const el = children as ReactElement<{ className?: string }>;
   const cls = el.props?.className;
-  if (typeof cls !== 'string') return undefined;
+  if (typeof cls !== "string") return undefined;
   const match = /(?:^|\s)language-([\w-]+)/.exec(cls);
   return match?.[1];
 }

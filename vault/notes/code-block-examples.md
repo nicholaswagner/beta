@@ -13,15 +13,15 @@ The title bar of every code block shows the language id from the fence. Override
 
 ### Fence syntax
 
-```bash data-no-header data-no-copy
+````bash data-no-header data-no-copy
 # ```bash data-no-header data-no-copy
 bun add lucide-react
-```
-```bash title="install.sh"
+````
+
+````bash title="install.sh"
 # ```bash title="install.sh"
 bun add lucide-react
-```
-
+````
 
 ---
 
@@ -33,22 +33,22 @@ Pick lines or ranges via a `{...}` directive in the fence meta. Comma-separated,
 
 ````md
 ```ts {1,3-5}
-const a = 1
-const b = 2
-const c = 3
-const d = 4
-const e = 5
+const a = 1;
+const b = 2;
+const c = 3;
+const d = 4;
+const e = 5;
 ```
 ````
 
 ### Live
 
 ```ts {1,3-5}
-const a = 1
-const b = 2
-const c = 3
-const d = 4
-const e = 5
+const a = 1;
+const b = 2;
+const c = 3;
+const d = 4;
+const e = 5;
 ```
 
 ---
@@ -62,13 +62,13 @@ Not a transformer — fumadocs's default `parseMetaString` recognizes a `lineNum
 ````md
 ```ts lineNumbers
 function add(a: number, b: number) {
-  return a + b
+  return a + b;
 }
 ```
 
 ```ts lineNumbers=42
 function startsAtFortyTwo() {
-  return 'see line numbers on the side'
+  return "see line numbers on the side";
 }
 ```
 ````
@@ -77,13 +77,13 @@ function startsAtFortyTwo() {
 
 ```ts lineNumbers
 function add(a: number, b: number) {
-  return a + b
+  return a + b;
 }
 ```
 
 ```ts lineNumbers=42
 function startsAtFortyTwo() {
-  return 'see line numbers on the side'
+  return "see line numbers on the side";
 }
 ```
 
@@ -97,18 +97,18 @@ Inline `// [!code ++]` and `// [!code --]` comments mark added / removed lines. 
 
 ````md
 ```ts
-const oldName = 'before' // [!code --]
-const newName = 'after' // [!code ++]
-const unchanged = 42
+const oldName = "before"; // [!code --]
+const newName = "after"; // [!code ++]
+const unchanged = 42;
 ```
 ````
 
 ### Live
 
 ```ts
-const oldName = 'before' // [!code --]
-const newName = 'after' // [!code ++]
-const unchanged = 42
+const oldName = "before"; // [!code --]
+const newName = "after"; // [!code ++]
+const unchanged = 42;
 ```
 
 ---
@@ -123,9 +123,9 @@ const unchanged = 42
 ```ts
 function setup() {
   // boilerplate...
-  const result = doTheThing() // [!code focus]
+  const result = doTheThing(); // [!code focus]
   // more boilerplate...
-  return result
+  return result;
 }
 ```
 ````
@@ -135,9 +135,9 @@ function setup() {
 ```ts
 function setup() {
   // boilerplate...
-  const result = doTheThing() // [!code focus]
+  const result = doTheThing(); // [!code focus]
   // more boilerplate...
-  return result
+  return result;
 }
 ```
 
@@ -151,18 +151,18 @@ function setup() {
 
 ````md
 ```ts
-const x: number = 'oops' // [!code error]
-const y = unusedVariable // [!code warning]
-const z = 42
+const x: number = "oops"; // [!code error]
+const y = unusedVariable; // [!code warning]
+const z = 42;
 ```
 ````
 
 ### Live
 
 ```ts
-const x: number = 'oops' // [!code error]
-const y = unusedVariable // [!code warning]
-const z = 42
+const x: number = "oops"; // [!code error]
+const y = unusedVariable; // [!code warning]
+const z = 42;
 ```
 
 ---
@@ -177,8 +177,8 @@ const z = 42
 ```ts
 // [!code word:async]
 async function fetchUser(id: string) {
-  const res = await fetch(`/users/${id}`)
-  return await res.json()
+  const res = await fetch(`/users/${id}`);
+  return await res.json();
 }
 ```
 ````
@@ -188,8 +188,8 @@ async function fetchUser(id: string) {
 ```ts
 // [!code word:async]
 async function fetchUser(id: string) {
-  const res = await fetch(`/users/${id}`)
-  return await res.json()
+  const res = await fetch(`/users/${id}`);
+  return await res.json();
 }
 ```
 
@@ -203,18 +203,26 @@ The directives stack — you can highlight a range, mark a diff, and dim focus a
 
 ````md
 ```ts {2-3} title="combined.ts"
-function before() { return 1 } // [!code --]
-function after() { return 2 }  // [!code ++]
-const main = () => after()     // [!code focus]
+function before() {
+  return 1;
+} // [!code --]
+function after() {
+  return 2;
+} // [!code ++]
+const main = () => after(); // [!code focus]
 ```
 ````
 
 ### Live
 
 ```ts {2-3} title="combined.ts"
-function before() { return 1 } // [!code --]
-function after() { return 2 }  // [!code ++]
-const main = () => after()     // [!code focus]
+function before() {
+  return 1;
+} // [!code --]
+function after() {
+  return 2;
+} // [!code ++]
+const main = () => after(); // [!code focus]
 ```
 
 ---
@@ -223,12 +231,12 @@ const main = () => after()     // [!code focus]
 
 Two fence-meta flags let you tone down the `<CodeBlock>` chrome for individual blocks. Set them on the fence line.
 
-| Flags | Result |
-|---|---|
-| (none) | Full: language label header + copy button |
-| `data-no-copy` | Language label header, no copy button |
-| `data-no-header` | No header bar, copy button still floats top-right |
-| `data-no-header data-no-copy` | Minimal: just the syntax-highlighted code |
+| Flags                         | Result                                            |
+| ----------------------------- | ------------------------------------------------- |
+| (none)                        | Full: language label header + copy button         |
+| `data-no-copy`                | Language label header, no copy button             |
+| `data-no-header`              | No header bar, copy button still floats top-right |
+| `data-no-header data-no-copy` | Minimal: just the syntax-highlighted code         |
 
 ### Fence syntax
 
@@ -261,14 +269,14 @@ echo "compact mode"
 ## How to enable the transformers
 
 ```ts title="source.config.ts"
-import { defineDocs, defineConfig } from 'fumadocs-mdx/config';
+import { defineDocs, defineConfig } from "fumadocs-mdx/config";
 import {
   transformerNotationDiff,
   transformerNotationFocus,
   transformerNotationErrorLevel,
   transformerNotationWordHighlight,
   transformerMetaHighlight,
-} from '@shikijs/transformers';
+} from "@shikijs/transformers";
 
 export default defineConfig({
   mdxOptions: {

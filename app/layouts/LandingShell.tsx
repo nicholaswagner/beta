@@ -1,11 +1,13 @@
-import { useEffect, type ReactNode } from 'react';
-import { useLocation } from 'react-router';
-import { Box, Container, Flex, Heading, ScrollArea, Separator } from '@radix-ui/themes';
-import type * as PageTree from 'fumadocs-core/page-tree';
-import type { TOCItemType } from 'fumadocs-core/toc';
-import { Sidebar } from '../components/Sidebar';
-import { DocsTOC } from '../components/TOC';
-import { SiteNav } from '~/components/ui/SiteNav';
+import { Box, Container, Flex, Heading, ScrollArea, Separator } from "@radix-ui/themes";
+import type * as PageTree from "fumadocs-core/page-tree";
+import type { TOCItemType } from "fumadocs-core/toc";
+import { useEffect, type ReactNode } from "react";
+import { useLocation } from "react-router";
+
+import { SiteNav } from "~/components/ui/SiteNav";
+
+import { Sidebar } from "../components/Sidebar";
+import { DocsTOC } from "../components/TOC";
 
 interface LandingShellProps {
   pageTree?: PageTree.Root;
@@ -29,7 +31,7 @@ function useHashScroll() {
     if (!hash) return;
     const id = decodeURIComponent(hash.slice(1));
     requestAnimationFrame(() => {
-      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   }, [hash]);
 }
@@ -43,7 +45,7 @@ export function LandingShell({ pageTree, toc, title, children }: LandingShellPro
         <Box flexGrow="1" px="6" py="6" style={{ minWidth: 0 }}>
           <Container size="3">
             {/* <Heading as="h1" size="8" mb="5"> */}
-              {/* {title} */}
+            {/* {title} */}
             {/* </Heading> */}
             {children}
           </Container>

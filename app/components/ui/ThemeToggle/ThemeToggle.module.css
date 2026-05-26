@@ -1,113 +1,117 @@
 @keyframes scale-easeOutElastic {
-	0% {
-		transform: scale(1);
-	}
+  0% {
+    transform: scale(1);
+  }
 
-	16% {
-		transform: scale(-0.32);
-	}
+  16% {
+    transform: scale(-0.32);
+  }
 
-	28% {
-		transform: scale(0.15);
-	}
+  28% {
+    transform: scale(0.15);
+  }
 
-	44% {
-		transform: scale(-0.05);
-	}
+  44% {
+    transform: scale(-0.05);
+  }
 
-	59% {
-		transform: scale(0.02);
-	}
+  59% {
+    transform: scale(0.02);
+  }
 
-	73% {
-		transform: scale(-0.01);
-	}
+  73% {
+    transform: scale(-0.01);
+  }
 
-	88% {
-		transform: scale(0);
-	}
+  88% {
+    transform: scale(0);
+  }
 
-	100% {
-		transform: scale(0);
-	}
+  100% {
+    transform: scale(0);
+  }
 }
 
 :root {
-	--ac: var(--accent-11);
-	--ac-contrast: var(--accent-contrast);
+  --ac: var(--accent-11);
+  --ac-contrast: var(--accent-contrast);
 }
 
 .Root {
-	/* all: unset; */
-	font-size: var(--default-font-size);
-	box-sizing: content-box;
-	cursor: pointer !important;
-	padding-block: 0;
-	padding-inline: 0;
-	width: 48px;
-	height: auto;
-	background-color: var(--accent-11);
-	/* border: 0.14rem solid var(--accent-5); */
-	border: 2px solid var(--accent-11);
-	border-radius: 9999px;
-	color: var(--black-a12);
-	transition: background-color 0.33s cubic-bezier(0.83, 0, 0.17, 1),
-		border-color 300ms ease-in;
-	overflow: hidden;
-	/* &[data-state="checked"] { */
-	/* background-color: var(--accent-indicator); */
-	/* background-color: var(--gray-6); */
-	/* border-color: var(--accent-indicator); */
-	/* border: 2px solid var(--accent-indicator); */
-	/* } */
-	&:hover {
-		overflow: visible;
-		animation: scale-easeOutElastic;
-	}
+  /* all: unset; */
+  font-size: var(--default-font-size);
+  box-sizing: content-box;
+  cursor: pointer !important;
+  padding-block: 0;
+  padding-inline: 0;
+  width: 48px;
+  height: auto;
+  background-color: var(--accent-11);
+  /* border: 0.14rem solid var(--accent-5); */
+  border: 2px solid var(--accent-11);
+  border-radius: 9999px;
+  color: var(--black-a12);
+  transition:
+    background-color 0.33s cubic-bezier(0.83, 0, 0.17, 1),
+    border-color 300ms ease-in;
+  overflow: hidden;
+  /* &[data-state="checked"] { */
+  /* background-color: var(--accent-indicator); */
+  /* background-color: var(--gray-6); */
+  /* border-color: var(--accent-indicator); */
+  /* border: 2px solid var(--accent-indicator); */
+  /* } */
+  &:hover {
+    overflow: visible;
+    animation: scale-easeOutElastic;
+  }
 
-	@media print {
-		display: none;
-	}
+  @media print {
+    display: none;
+  }
 }
 
 .Thumb {
-	box-sizing: content-box;
-	align-items: center;
-	border-radius: 9999px;
-	background-color: var(--accent-contrast);
-	border: 1px solid transparent;
-	display: flex;
-	height: 24px;
-	width: 24px;
-	justify-content: center;
-	transform: translateX(1);
-	transition: transform 0.33s cubic-bezier(0.83, 0, 0.17, 1), opacity 0.33s
-		cubic-bezier(0.83, 0, 0.17, 1), background-color 0.33s
-		cubic-bezier(0.83, 0, 0.17, 1);
-	will-change: transform;
-	svg {
-		color: var(--accent-10);
-		fill: var(--accent-10);
-		transition: transform 0.33s cubic-bezier(0.83, 0, 0.17, 1) 0.33s, scale 0.3s
-			cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s, background-color 0.33s ease-in 1s;
-	}
+  box-sizing: content-box;
+  align-items: center;
+  border-radius: 9999px;
+  background-color: var(--accent-contrast);
+  border: 1px solid transparent;
+  display: flex;
+  height: 24px;
+  width: 24px;
+  justify-content: center;
+  transform: translateX(1);
+  transition:
+    transform 0.33s cubic-bezier(0.83, 0, 0.17, 1),
+    opacity 0.33s cubic-bezier(0.83, 0, 0.17, 1),
+    background-color 0.33s cubic-bezier(0.83, 0, 0.17, 1);
+  will-change: transform;
+  svg {
+    color: var(--accent-10);
+    fill: var(--accent-10);
+    transition:
+      transform 0.33s cubic-bezier(0.83, 0, 0.17, 1) 0.33s,
+      scale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s,
+      background-color 0.33s ease-in 1s;
+  }
 
-	&[data-state="checked"] {
-		background-color: var(--gray-1);
-		transform: translateX(22px);
-		/* svg {
+  &[data-state="checked"] {
+    background-color: var(--gray-1);
+    transform: translateX(22px);
+    /* svg {
 			color: transparent;
 			fill: var(--accent-11);
 		} */
-	}
-	&:hover {
-		svg {
-			scale: 1.2;
-		}
-	}
+  }
+  &:hover {
+    svg {
+      scale: 1.2;
+    }
+  }
 }
 
 .icon {
-	width: 24px;
-	height: 24px;
+  width: 24px;
+  height: 24px;
 }
