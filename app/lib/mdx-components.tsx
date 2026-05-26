@@ -14,7 +14,7 @@ import { Link as RouterLink } from 'react-router';
 import type { MDXComponents } from 'mdx/types';
 import { ScrambleText } from '~/components/ui/scrambleText';
 import { buildCallout, buildObsidianCallout, buildObsidianCalloutBody, buildObsidianCalloutTitle } from '~/lib/mdx-callout-builders';
-
+import { buildCode, buildPre } from '~/lib/mdx-code-builders';
 /**
  * Prefix root-absolute URLs with Vite's `import.meta.env.BASE_URL` so assets
  * served from /public/ (which `fumadocs-obsidian` writes URLs for as
@@ -65,21 +65,9 @@ export function getMDXComponents(extra?: MDXComponents): MDXComponents {
     a: Anchor,
     strong: (p) => <Text weight="bold" {...p} />,
     em: (p) => <Text style={{ fontStyle: 'italic' }} {...p} />,
-    code: (p) => <Code variant="soft" {...p} />,
-    pre: (p) => (
-      <pre
-        {...p}
-        style={{
-          background: 'var(--gray-2)',
-          border: '1px solid var(--gray-5)',
-          borderRadius: 'var(--radius-3)',
-          padding: '1rem',
-          overflowX: 'auto',
-          margin: '1rem 0',
-          ...p.style,
-        }}
-      />
-    ),
+    // code: (p) => <Code variant="ghost" weight="light" {...p} />,
+    code: (p) => buildCode(p),
+    pre: (p) => buildPre(p),
     kbd: (p) => <Kbd {...p} />,
     hr: () => <Separator size="4" my="5" />,
     blockquote: (p) => <Blockquote {...p} />,
@@ -101,12 +89,12 @@ export function getMDXComponents(extra?: MDXComponents): MDXComponents {
     th: (p) => <Table.ColumnHeaderCell {...p} />,
     td: (p) => <Table.Cell {...p} />,
     img: (p) => (
-      <div className="image-container"><img
+      <span className="image-container"><img
         {...p}
         src={withBase(p.src)}
         style={{ maxWidth: '100%', borderRadius: 'var(--radius-3)', ...p.style }}
         alt={p.alt ?? ''}
-      /></div>
+      /></span>
     ),
     Callout: buildCallout,
     ObsidianCallout: buildObsidianCallout,

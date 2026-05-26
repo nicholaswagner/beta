@@ -139,6 +139,17 @@ img {
 
 
 
+/*
+ * fumadocs-ui's <CodeBlock> renders its copy button as a plain <button>
+ * (not a Radix Button), so the `--cursor-button: pointer` override above
+ * doesn't reach it. Restore the hand cursor on hover for the buttons inside
+ * any shiki figure (currently just the copy button, but any future actions
+ * we drop in via the `Actions` slot will get the same treatment).
+ */
+figure.shiki button {
+  cursor: pointer;
+}
+
 /* The .image-container class needs to be applied to a div wrapped around the image you want to apply this filter to */
 .image-container {
   display: inline-block;
