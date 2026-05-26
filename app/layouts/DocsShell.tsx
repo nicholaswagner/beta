@@ -1,12 +1,14 @@
-import { Box, Container, Flex, Heading, ScrollArea, Separator, Em } from "@radix-ui/themes";
+import { Box, Container, Em, Flex, Heading, IconButton, ScrollArea } from "@radix-ui/themes";
 import type * as PageTree from "fumadocs-core/page-tree";
 import type { TOCItemType } from "fumadocs-core/toc";
-import { useEffect, type ReactNode } from "react";
+import { Menu } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useLocation } from "react-router";
 
 import { SiteNav } from "~/components/ui/SiteNav";
 
-import { Sidebar } from "../components/Sidebar";
+import { Sidebar } from "../components/ui/Sidebar/Sidebar";
+import { SidebarDrawer } from "../components/ui/Sidebar/SidebarDrawer";
 import { DocsTOC } from "../components/TOC";
 
 interface DocsShellProps {
@@ -20,10 +22,6 @@ interface DocsShellProps {
  * React Router intercepts in-page anchor clicks and updates the URL via
  * `history.pushState`, which does not trigger the browser's native fragment
  * scroll. Watch `location.hash` and explicitly `scrollIntoView` the target.
- *
- * Runs on mount (for deep links like `/notes/hello#parlor`) and on every hash
- * change. `requestAnimationFrame` defers to after the DOM commits so the
- * target element exists when we look it up.
  */
 function useHashScroll() {
   const { hash } = useLocation();
@@ -38,12 +36,46 @@ function useHashScroll() {
 
 export function DocsShell({ pageTree, toc, title, children }: DocsShellProps) {
   useHashScroll();
+  const { pathname } = useLocation();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const sidebarContent = (
+    <>
+      <Box px="4" pt="4" pb="2">
+        <Heading size="3">nicholaswagner.dev / beta</Heading>
+      </Box>
+      <Box px="2" pb="4">
+        <Sidebar tree={pageTree} collapsible defaultOpenPath={pathname} />
+      </Box>
+    </>
+  );
+
   return (
     <Flex direction="column" minHeight="100vh">
       <SiteNav />
+      <Box
+        display={{ initial: "block", lg: "none" }}
+        style={{
+          position: "fixed",
+          top: "0.75rem",
+          right: "0.75rem",
+          zIndex: 40,
+        }}
+      >
+        <IconButton
+          variant="soft"
+          color="gray"
+          size="2"
+          onClick={() => setDrawerOpen(true)}
+          aria-label="Open sidebar"
+        >
+          <Menu size={18} />
+        </IconButton>
+      </Box>
       <Flex direction="row" minHeight="100vh">
         <Box
           asChild
+          display={{ initial: "none", lg: "block" }}
           style={{
             width: "280px",
             borderRight: "1px solid var(--gray-5)",
@@ -55,18 +87,12 @@ export function DocsShell({ pageTree, toc, title, children }: DocsShellProps) {
         >
           <aside>
             <ScrollArea type="auto" scrollbars="vertical" style={{ height: "100%" }}>
-              <Box p="4">
-                <Heading size="3" mb="3">
-                  nicholaswagner.dev / beta
-                </Heading>
-                <Separator size="4" my="3" />
-                <Sidebar tree={pageTree} />
-              </Box>
+              {sidebarContent}
             </ScrollArea>
           </aside>
         </Box>
 
-        <Box flexGrow="1" px="6" py="6" style={{ minWidth: 0 }}>
+        <Box flexGrow="1" px={{ initial: "4", sm: "6" }} py="6" style={{ minWidth: 0 }}>
           <Container size="3">
             <Em>{title}</Em>
             {children}
@@ -74,6 +100,7 @@ export function DocsShell({ pageTree, toc, title, children }: DocsShellProps) {
         </Box>
 
         <Box
+          display={{ initial: "none", md: "block" }}
           style={{
             width: "240px",
             flexShrink: 0,
@@ -86,6 +113,10 @@ export function DocsShell({ pageTree, toc, title, children }: DocsShellProps) {
           <DocsTOC toc={toc} />
         </Box>
       </Flex>
+
+      <SidebarDrawer open={drawerOpen} onOpenChange={setDrawerOpen} ariaLabel="Site navigation">
+        {sidebarContent}
+      </SidebarDrawer>
     </Flex>
   );
 }

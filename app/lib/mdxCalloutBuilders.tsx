@@ -130,7 +130,7 @@ function buildCallout({ type, children }: { type?: string; children?: React.Reac
   return (
     <Callout.Root color={mapCalloutColor(type)} my="3">
       <Callout.Icon>{mapCalloutIcon(type)}</Callout.Icon>
-      <Callout.Text>{children}</Callout.Text>
+      <Callout.Text as="div">{children}</Callout.Text>
     </Callout.Root>
   );
 }
@@ -161,7 +161,10 @@ function buildObsidianCalloutBody({ children }: { children?: React.ReactNode }) 
   // Render nothing when the source has no body to avoid an empty
   // text node taking up vertical space.
   if (!children) return null;
-  return <Callout.Text mt="1">{children}</Callout.Text>;
+  // as="div" prevents <p> inside <p> — Callout.Text defaults to <p>
+  // but MDX children are also wrapped in <p> (the p MDX component),
+  // which would produce invalid <p><p>...</p></p> HTML.
+  return <Callout.Text as="div" mt="1">{children}</Callout.Text>;
 }
 
 export { buildCallout, buildObsidianCallout, buildObsidianCalloutTitle, buildObsidianCalloutBody };

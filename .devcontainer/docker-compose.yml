@@ -1,0 +1,15 @@
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ..:/workspace
+    ports:
+      - "3000:3000"
+      - "5173:5173"
+    command: bun run dev
+    environment:
+      - BUN_INSTALL_CACHE_DIR=/bun-cache
+      - CHOKIDAR_USEPOLLING=true
+    working_dir: /workspace

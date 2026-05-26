@@ -14,6 +14,7 @@ import type { ComponentPropsWithoutRef } from "react";
 import { Link as RouterLink } from "react-router";
 
 import { ScrambleText } from "~/components/ui/ScrambleText";
+import { Mermaid } from "~/lib/mdxMermaidComponent";
 import {
   buildCallout,
   buildObsidianCallout,
@@ -113,6 +114,7 @@ export function getMDXComponents(extra?: MDXComponents): MDXComponents {
     // `<ScrambleText>headline</ScrambleText>`. PascalCase is required for
     // the MDX parser to treat them as components rather than HTML tags.
     ScrambleText,
+    Mermaid,
     ...extra,
   };
 }

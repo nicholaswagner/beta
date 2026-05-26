@@ -1,4 +1,4 @@
-import { Avatar, Card, Flex, HoverCard, Link, Text } from "@radix-ui/themes";
+import { Flex, Link } from "@radix-ui/themes";
 import { useState } from "react";
 
 // import profileImage from "../../../assets/pixelized_profile.png";
@@ -34,42 +34,16 @@ export const SiteNav = () => {
       }}
     >
       <Flex align="center" gapX={{ initial: "6" }}>
-        <HoverCard.Root>
-          <HoverCard.Trigger>
-            <Link href="https://www.nicholaswagner.dev" target="_blank">
-              <NW
-                style={{
-                  color: "var(--accent-11)",
-                  height: "auto",
-                  width: "3rem",
-                }}
-                className="nwLink"
-              />
-            </Link>
-          </HoverCard.Trigger>
-          <HoverCard.Content side="left" size="2">
-            <Card
-              style={{
-                padding: "1.5rem",
-                backgroundColor: "var(--accent-1)",
-              }}
-            >
-              <Flex gap="4" direction="row" align="center" justify="start">
-                {/* <Avatar src={profileImage} fallback="NW" /> */}
-                <Flex direction="column">
-                  <Text size="2" weight="bold">
-                    Nicholas Wagner
-                  </Text>
-                  <Link href="https://www.github.com/nicholaswagner" target="_blank">
-                    <Text size="2" weight="light">
-                      github.com/nicholaswagner
-                    </Text>
-                  </Link>
-                </Flex>
-              </Flex>
-            </Card>
-          </HoverCard.Content>
-        </HoverCard.Root>
+        <Link href="/beta/" target="_self">
+          <NW
+            style={{
+              color: "var(--accent-11)",
+              height: "auto",
+              width: "3rem",
+            }}
+            className="nwLink"
+          />
+        </Link>
         {/* <BreadCrumbs /> */}
       </Flex>
       <ThemeToggle checked={isChecked} onCheckedChange={handleChecked} />

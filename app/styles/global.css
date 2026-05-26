@@ -1,3 +1,6 @@
+/* @import "mermaid/dist/mermaid.css"; */
+/* @import "mermaid.css"; */
+
 /*
  * App-wide resets + page background.
  *
@@ -14,16 +17,22 @@
 @keyframes theme-flicker {
   0% {
     filter: none;
-  } /* current theme */
+  }
+
+  /* current theme */
   25% {
     filter: grayscale(1) brightness(1);
-  } /* neutral gray */
+  }
+
+  /* neutral gray */
   50% {
     filter: grayscale(1) brightness(0);
   }
+
   100% {
     filter: grayscale(1) brightness(1);
   }
+
   /* reveal new theme */
 }
 
@@ -68,6 +77,7 @@ img {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -187,6 +197,7 @@ figure.shiki button {
   background-color: var(--red-a3);
   box-shadow: inset 2px 0 0 var(--red-9);
 }
+
 .shiki .line.highlighted.error::before {
   content: "✕";
   color: var(--red-9);
@@ -198,6 +209,7 @@ figure.shiki button {
   background-color: var(--amber-a3);
   box-shadow: inset 2px 0 0 var(--amber-9);
 }
+
 .shiki .line.highlighted.warning::before {
   content: "⚠";
   color: var(--amber-9);
@@ -212,6 +224,7 @@ figure.shiki button {
   line-height: 0;
   background: #42a4ff;
 }
+
 .image-container::after {
   content: "";
   position: absolute;
@@ -223,10 +236,9 @@ figure.shiki button {
   background: #002a8c;
   opacity: 1;
 }
-.image-container > img {
-  -webkit-filter: contrast(120%) grayscale(100%) hue-rotate(0deg) invert(0%) opacity(100%)
-    saturate(100%) sepia(0%);
-  filter: contrast(120%) grayscale(100%) hue-rotate(0deg) invert(0%) opacity(100%) saturate(100%)
-    sepia(0%);
+
+.image-container>img {
+  -webkit-filter: contrast(120%) grayscale(100%) hue-rotate(0deg) invert(0%) opacity(100%) saturate(100%) sepia(0%);
+  filter: contrast(120%) grayscale(100%) hue-rotate(0deg) invert(0%) opacity(100%) saturate(100%) sepia(0%);
   mix-blend-mode: multiply;
 }

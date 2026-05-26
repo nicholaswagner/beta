@@ -1,0 +1,221 @@
+/* Sidebar visual treatment — mirrors the TOC component's look.
+   Plain rows (no backgrounds), color-only hover/active, depth-based indent,
+   single clip-path active indicator. Folders add accordion behavior on top. */
+
+.sb-nav {
+  position: relative;
+}
+
+/* Persistent vertical rail behind the active-indicator bar */
+.sb-nav::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--gray-5);
+  pointer-events: none;
+}
+
+.sb-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sb-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0;
+  font-size: var(--font-size-2);
+  line-height: var(--line-height-2);
+  color: var(--gray-11);
+  text-decoration: none;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  width: 100%;
+  transition: color 150ms ease;
+}
+
+.sb-row:hover {
+  color: var(--gray-12);
+}
+
+.sb-row[aria-current="page"],
+.sb-row > .sb-row-link[aria-current="page"] {
+  color: var(--accent-11);
+  font-weight: 500;
+}
+
+/* Depth indent — mirrors TOC's ps-3 / ps-6 / ps-8 */
+.sb-row[data-depth="0"] {
+  padding-left: 0.75rem;
+}
+.sb-row[data-depth="1"] {
+  padding-left: 1.5rem;
+}
+.sb-row[data-depth="2"] {
+  padding-left: 2rem;
+}
+.sb-row[data-depth="3"],
+.sb-row[data-depth="4"],
+.sb-row[data-depth="5"] {
+  padding-left: 2.5rem;
+}
+
+.sb-row-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sb-row-label-only {
+  cursor: default;
+  color: var(--gray-11);
+}
+
+/* Folder-with-index: link takes the row's text styling */
+.sb-row > .sb-row-link {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  color: inherit;
+  text-decoration: none;
+}
+
+.sb-chevron {
+  flex: 0 0 auto;
+  color: var(--gray-10);
+  transition: transform 150ms cubic-bezier(0.45, 0, 0.55, 1);
+}
+
+.sb-chevron-btn {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  padding: 0 0.25rem;
+  cursor: pointer;
+  color: var(--gray-10);
+}
+
+.sb-chevron-btn:hover {
+  color: var(--gray-12);
+}
+
+[data-state="open"] .sb-chevron,
+.sb-chevron-btn[data-state="open"] .sb-chevron {
+  transform: rotate(90deg);
+}
+
+.sb-separator {
+  font-size: var(--font-size-1);
+  font-weight: 600;
+  color: var(--gray-11);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0 0.75rem;
+  margin: 1rem 0 0.25rem;
+}
+
+/* Single active indicator — same clip-path technique as fumadocs TOC */
+.sb-track {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--accent-11);
+  pointer-events: none;
+  transition: clip-path 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  clip-path: polygon(
+    0 var(--track-top, 0),
+    100% var(--track-top, 0),
+    100% var(--track-bottom, 0),
+    0 var(--track-bottom, 0)
+  );
+}
+
+/* Radix Accordion content animation */
+@keyframes sb-acc-down {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+  }
+}
+
+@keyframes sb-acc-up {
+  from {
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+  }
+  to {
+    height: 0;
+    opacity: 0;
+  }
+}
+
+.sb-acc-content {
+  overflow: hidden;
+}
+
+.sb-acc-content[data-state="open"] {
+  animation: sb-acc-down 150ms cubic-bezier(0.45, 0, 0.55, 1);
+}
+
+.sb-acc-content[data-state="closed"] {
+  animation: sb-acc-up 150ms cubic-bezier(0.45, 0, 0.55, 1);
+}
+
+/* Mobile drawer — unchanged */
+
+.sb-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--color-overlay);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 250ms ease;
+  z-index: 50;
+}
+
+.sb-drawer-backdrop[data-open="true"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sb-drawer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: min(320px, 85vw);
+  background: var(--color-background);
+  border-right: 1px solid var(--gray-5);
+  z-index: 51;
+  overflow-y: auto;
+  transform: translateX(-100%);
+  transition: transform 250ms ease;
+  pointer-events: none;
+}
+
+.sb-drawer[data-open="true"] {
+  transform: translateX(0);
+  pointer-events: auto;
+}

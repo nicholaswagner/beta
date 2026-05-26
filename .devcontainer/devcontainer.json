@@ -1,0 +1,22 @@
+{
+  "name": "Local dev container",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "oven.bun-vscode",
+        "oxc.oxc-vscode"
+      ]
+    }
+  },
+  "forwardPorts": [
+    3000,
+    5173
+  ],
+  "postCreateCommand": "bun install && bun run generate && bun run dev",
+  "remoteUser": "root"
+}

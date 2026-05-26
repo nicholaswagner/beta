@@ -1,5 +1,6 @@
 import { transformerNotationErrorLevel, transformerMetaHighlight } from "@shikijs/transformers";
 import { rehypeCodeDefaultOptions } from "fumadocs-core/mdx-plugins";
+import { remarkMdxMermaid } from "fumadocs-core/mdx-plugins/remark-mdx-mermaid";
 import { defineDocs, defineConfig } from "fumadocs-mdx/config";
 import type { ShikiTransformer } from "shiki";
 
@@ -63,6 +64,12 @@ export default defineConfig({
     remarkImageOptions: {
       useImport: false,
     },
+    // Rewrite ```mermaid fences into <Mermaid chart="..." /> JSX nodes. The
+    // actual diagram rendering is handled at runtime by the Mermaid component
+    // registered in app/lib/mdxComponents.tsx. This is the lightweight client-
+    // side path — there's also `@theguild/remark-mermaid` which renders SVG at
+    // build time via Playwright, but we don't need that infrastructure.
+    remarkPlugins: [remarkMdxMermaid],
     // Shiki strips the original `language-xxx` class off the inner <code>
     // element by default. Put it back so our `pre` MDX mapping can read the
     // language and pass it to fumadocs-ui <CodeBlock>'s title bar.

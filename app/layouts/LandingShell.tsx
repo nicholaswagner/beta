@@ -6,7 +6,7 @@ import { useLocation } from "react-router";
 
 import { SiteNav } from "~/components/ui/SiteNav";
 
-import { Sidebar } from "../components/Sidebar";
+import { Sidebar } from "../components/ui/Sidebar/Sidebar";
 import { DocsTOC } from "../components/TOC";
 
 interface LandingShellProps {
