@@ -5,6 +5,7 @@ build
 
 # Generated content (fumadocs-mdx + fumadocs-obsidian outputs)
 content
+screenshots
 
 # Generated assets from the vault (kept out of git; rebuilt by `bun run generate`).
 # Hand-authored assets, if any, should live elsewhere (e.g. /app/assets/) and be
@@ -17,3 +18,8 @@ public/*
 .*
 !.gitignore
 !.github
+
+# AI-generated content
+AGENTS.md
+ICEBOX.md
+Fumadocs.md
