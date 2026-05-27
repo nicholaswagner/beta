@@ -11,16 +11,61 @@ export const source = loader({
 export type Source = typeof source;
 
 export function getNotesTree(): PageTree.Root {
-  const notes = findNotesFolder(source.pageTree.children);
+  const notes = findFolderByPrefix(source.pageTree.children, "/notes");
   if (!notes) return { name: "Notes", children: [] };
   return { name: "Notes", children: notes.children };
 }
 
-function findNotesFolder(nodes: PageTree.Node[]): PageTree.Folder | undefined {
+/**
+ * Resolve every leaf MDX page under `/cv/experience`, excluding the synthesized
+ * `index.mdx` (which the post-process step in `scripts/synthesizeFolderIndexes.ts`
+ * stamps with `generated: true`). Sorted by frontmatter `order` ascending (so
+ * order=1 is the most recent role), then by `endYear` descending, then
+ * `startYear` descending.
+ */
+export function getExperiencePages() {
+  const all = source.getPages();
+  const entries = all
+    .filter((p) => p.url.startsWith("/cv/experience/"))
+    .filter((p) => (p.data as { generated?: boolean }).generated !== true);
+
+  return entries.sort((a, b) => {
+    const ad = a.data as ExperienceData;
+    const bd = b.data as ExperienceData;
+    if (ad.order != null && bd.order != null) return ad.order - bd.order;
+    const aEnd = yearOf(ad.endYear);
+    const bEnd = yearOf(bd.endYear);
+    if (aEnd !== bEnd) return bEnd - aEnd;
+    return yearOf(bd.startYear) - yearOf(ad.startYear);
+  });
+}
+
+interface ExperienceData {
+  role?: string;
+  company?: string;
+  companyUrl?: string;
+  startYear?: number | string;
+  endYear?: number | string;
+  location?: string;
+  order?: number;
+}
+
+/** Coerce `endYear: present` (or any non-numeric) to a future-year sentinel so it sorts to the top. */
+function yearOf(v: number | string | undefined): number {
+  if (typeof v === "number") return v;
+  if (typeof v === "string") {
+    if (v.toLowerCase() === "present") return 9999;
+    const n = parseInt(v, 10);
+    if (!Number.isNaN(n)) return n;
+  }
+  return 0;
+}
+
+function findFolderByPrefix(nodes: PageTree.Node[], prefix: string): PageTree.Folder | undefined {
   for (const n of nodes) {
-    if (n.type === "folder" && folderMatchesPrefix(n, "/notes")) return n;
+    if (n.type === "folder" && folderMatchesPrefix(n, prefix)) return n;
     if (n.type === "folder") {
-      const found = findNotesFolder(n.children);
+      const found = findFolderByPrefix(n.children, prefix);
       if (found) return found;
     }
   }

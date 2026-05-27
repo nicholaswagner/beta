@@ -1,8 +1,19 @@
 import { transformerNotationErrorLevel, transformerMetaHighlight } from "@shikijs/transformers";
+import { pageSchema } from "fumadocs-core/source/schema";
 import { rehypeCodeDefaultOptions } from "fumadocs-core/mdx-plugins";
 import { remarkMdxMermaid } from "fumadocs-core/mdx-plugins/remark-mdx-mermaid";
 import { defineDocs, defineConfig } from "fumadocs-mdx/config";
+import { z } from "zod";
 import type { ShikiTransformer } from "shiki";
+
+/**
+ * Extend the default `pageSchema` with `.catchall(z.any())` so unknown
+ * frontmatter keys (e.g. `role`, `company`, `links`, `blurb` on the CV pages)
+ * pass through to `page.data` instead of getting stripped by Zod 4's default
+ * `$strip` mode. Don't add explicit fields here for every consumer — keep this
+ * permissive and let route loaders do the typing.
+ */
+const docSchema = pageSchema.catchall(z.any());
 
 /**
  * Lift our custom fence-meta flags + the upstream `lineNumbers` directive
@@ -45,6 +56,7 @@ function transformerLiftFumaFlags(): ShikiTransformer {
 export const docs = defineDocs({
   dir: "content",
   docs: {
+    schema: docSchema,
     postprocess: {
       includeProcessedMarkdown: true,
     },
