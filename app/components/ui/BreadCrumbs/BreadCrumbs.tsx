@@ -1,15 +1,13 @@
-import { Em, Link } from "@radix-ui/themes";
-import { useLocation } from "react-router";
+import { Em, Link as RLink } from "@radix-ui/themes";
 import { ChevronRight } from "lucide-react";
+import { Fragment, type ComponentProps } from "react";
+import { Link as RouterLink, useLocation } from "react-router";
 
-import { type ComponentProps, Fragment } from "react";
 import styles from "./breadcrumbs.module.css";
 
-const CrumbPage = ({
-	label,
-}: ComponentProps<"li"> & { label: string; href?: string }) => {
+const CrumbPage = ({ label }: { label: string }) => {
 	return (
-		<Link
+		<RLink
 			size="1"
 			weight="bold"
 			color="gray"
@@ -19,15 +17,11 @@ const CrumbPage = ({
 			style={{ color: "var(--gray-11)", userSelect: "none" }}
 		>
 			<Em>{label}</Em>
-		</Link>
+		</RLink>
 	);
 };
 
-const CrumSeparator = ({
-	children,
-	className,
-	...props
-}: ComponentProps<"li">) => {
+const CrumbSeparator = ({ className, ...props }: ComponentProps<"li">) => {
 	return (
 		<li
 			data-slot="breadcrumb-separator"
@@ -37,34 +31,15 @@ const CrumSeparator = ({
 			style={{ color: "var(--gray-10)" }}
 			{...props}
 		>
-			{children || <ChevronRight style={{ scale: 0.5 }} />}
+			<ChevronRight style={{ scale: 0.5 }} />
 		</li>
 	);
 };
 
 export const BreadCrumbs = () => {
 	const { pathname } = useLocation();
-	const paths = pathname === "/" ? ["index"] : pathname.split("/");
-	const numPaths = paths.length;
-	const crumbs = paths.map((path, index) => {
-		const isLastItem = index === numPaths - 1;
-		const href = pathname.slice(0, pathname.indexOf(path) + path.length);
-		const crumb = (
-			<Link href={href} size="1" weight="bold" className="rootlink">
-				{path}
-			</Link>
-		);
-
-		return (
-			<Fragment key={`breadcrumb-${path}`}>
-				<li data-slot={isLastItem ? "breadcrumb-page" : "breadcrum-item"}>
-					{!isLastItem && crumb}
-					{isLastItem && <CrumbPage key={`crumb-page-${path}`} label={path} />}
-				</li>
-				{index > 0 && index < numPaths - 1 && <CrumSeparator />}
-			</Fragment>
-		);
-	});
+	const segments = pathname.split("/").filter(Boolean);
+	if (segments.length === 0) return null;
 
 	return (
 		<nav
@@ -72,7 +47,26 @@ export const BreadCrumbs = () => {
 			data-slot="breadcrumbs"
 			className={styles.breadcrumbs}
 		>
-			<ol data-slot="breadcrumb-list">{crumbs}</ol>
+			<ol data-slot="breadcrumb-list">
+				{segments.map((segment, i) => {
+					const to = "/" + segments.slice(0, i + 1).join("/");
+					const isLast = i === segments.length - 1;
+					return (
+						<Fragment key={to}>
+							{i > 0 && <CrumbSeparator />}
+							<li data-slot={isLast ? "breadcrumb-page" : "breadcrumb-item"}>
+								{isLast ? (
+									<CrumbPage label={segment} />
+								) : (
+									<RLink asChild size="1" weight="bold" className="rootlink">
+										<RouterLink to={to}>{segment}</RouterLink>
+									</RLink>
+								)}
+							</li>
+						</Fragment>
+					);
+				})}
+			</ol>
 		</nav>
 	);
 };
