@@ -1,6 +1,8 @@
 import { useEffect, useRef, type RefObject } from "react";
 import { useLocation } from "react-router";
 
+import styles from "./sidebar.module.css";
+
 export function SidebarTrack({ containerRef }: { containerRef: RefObject<HTMLElement | null> }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
@@ -34,5 +36,5 @@ export function SidebarTrack({ containerRef }: { containerRef: RefObject<HTMLEle
     return () => ro.disconnect();
   }, [pathname, containerRef]);
 
-  return <div ref={trackRef} className="sb-track" aria-hidden="true" />;
+  return <div ref={trackRef} className={styles.sbTrack} aria-hidden="true" />;
 }

@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router";
 
 import { SidebarTrack } from "~/components/ui/Sidebar/SidebarTrack";
-import "~/styles/sidebar.css";
+import styles from "./sidebar.module.css";
 
 interface SidebarProps {
   tree: PageTree.Root;
@@ -38,11 +38,11 @@ export function Sidebar({ tree, collapsible = false, defaultOpenPath }: SidebarP
   }, [pathname]);
 
   return (
-    <nav ref={navRef} className="sb-nav">
+    <nav ref={navRef} className={styles.sbNav}>
       <SidebarTrack containerRef={navRef} />
-      <ul className="sb-list">
+      <ul className={styles.sbList}>
         {tree.children.map((node, i) => (
-          <li key={i}>
+          <li key={i} data-folder={node.type === "folder" || undefined}>
             <TreeNode
               node={node}
               depth={0}
@@ -69,7 +69,7 @@ interface NodeProps {
 
 function TreeNode({ node, depth, collapsible, defaultOpenPath, openValues, onOpenChange }: NodeProps) {
   if (node.type === "separator") {
-    return <div className="sb-separator">{flattenName(node.name)}</div>;
+    return <div className={styles.sbSeparator}>{flattenName(node.name)}</div>;
   }
 
   if (node.type === "folder") {
@@ -98,15 +98,16 @@ function FolderNode({
 }: NodeProps & { node: PageTree.Folder }) {
   const key = folderKey(node);
   const hasChildren = node.children.length > 0;
+  const smallFolder = countItems(node) < 10;
 
-  if (!collapsible || !hasChildren) {
+  if (!collapsible || !hasChildren || smallFolder) {
     return (
       <>
         {node.index ? (
           <PageRow url={node.index.url} name={node.index.name} depth={depth} />
         ) : (
-          <div className="sb-row sb-row-label-only" data-depth={depth}>
-            <span className="sb-row-label">{flattenName(node.name)}</span>
+          <div className={`${styles.sbRow} ${styles.sbRowFolder} ${styles.sbRowLabelOnly}`} data-depth={depth}>
+            <span className={styles.sbRowLabel}>{flattenName(node.name)}</span>
           </div>
         )}
         {hasChildren && (
@@ -135,13 +136,13 @@ function FolderNode({
     >
       <Accordion.Item value={key}>
         {node.index ? (
-          <div className="sb-row" data-depth={depth}>
-            <NavLink to={node.index.url} end className="sb-row-link">
-              <span className="sb-row-label">{flattenName(node.index.name)}</span>
+          <div className={`${styles.sbRow} ${styles.sbRowFolder}`} data-depth={depth}>
+            <NavLink to={node.index.url} end className={styles.sbRowLink}>
+              <span className={styles.sbRowLabel}>{flattenName(node.index.name)}</span>
             </NavLink>
             <Accordion.Header asChild>
               <div>
-                <Accordion.Trigger className="sb-chevron-btn" aria-label="Toggle folder">
+                <Accordion.Trigger className={styles.sbChevronBtn} aria-label="Toggle folder">
                   <ChevronIcon />
                 </Accordion.Trigger>
               </div>
@@ -150,14 +151,14 @@ function FolderNode({
         ) : (
           <Accordion.Header asChild>
             <div>
-              <Accordion.Trigger className="sb-row" data-depth={depth}>
-                <span className="sb-row-label">{flattenName(node.name)}</span>
+              <Accordion.Trigger className={`${styles.sbRow} ${styles.sbRowFolder}`} data-depth={depth}>
+                <span className={styles.sbRowLabel}>{flattenName(node.name)}</span>
                 <ChevronIcon />
               </Accordion.Trigger>
             </div>
           </Accordion.Header>
         )}
-        <Accordion.Content className="sb-acc-content">
+        <Accordion.Content className={styles.sbAccContent}>
           <ChildrenList
             nodes={node.children}
             depth={depth + 1}
@@ -196,9 +197,9 @@ function ChildrenList({
   }, [seeded]);
 
   return (
-    <ul className="sb-list">
+    <ul className={styles.sbList}>
       {nodes.map((node, i) => (
-        <li key={i}>
+        <li key={i} data-folder={node.type === "folder" || undefined}>
           <TreeNode
             node={node}
             depth={depth}
@@ -223,14 +224,14 @@ function PageRow({
   depth: number;
 }) {
   return (
-    <NavLink to={url} end className="sb-row" data-depth={depth}>
-      <span className="sb-row-label">{flattenName(name)}</span>
+    <NavLink to={url} end className={styles.sbRow} data-depth={depth}>
+      <span className={styles.sbRowLabel}>{flattenName(name)}</span>
     </NavLink>
   );
 }
 
 function ChevronIcon() {
-  return <ChevronRight className="sb-chevron" size={14} />;
+  return <ChevronRight className={styles.sbChevron} size={14} />;
 }
 
 function folderKey(node: PageTree.Folder): string {
@@ -271,6 +272,16 @@ function seedOpenFolders(nodes: PageTree.Node[], activePath: string): Set<string
   };
   visit(nodes);
   return open;
+}
+
+function countItems(folder: PageTree.Folder): number {
+  let count = 0;
+  if (folder.index) count++;
+  for (const n of folder.children) {
+    if (n.type === "page") count++;
+    else if (n.type === "folder") count += countItems(n);
+  }
+  return count;
 }
 
 function flattenName(name: PageTree.Node["name"]): string {

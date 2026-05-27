@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
 import { useLocation } from "react-router";
 
-import "~/styles/sidebar.css";
+import styles from "./sidebar.module.css";
 
 interface SidebarDrawerProps {
   open: boolean;
@@ -33,12 +33,12 @@ export function SidebarDrawer({ open, onOpenChange, ariaLabel, children }: Sideb
   return (
     <>
       <div
-        className="sb-drawer-backdrop"
+        className={styles.sbDrawerBackdrop}
         data-open={open}
         onClick={() => onOpenChange(false)}
       />
       <aside
-        className="sb-drawer"
+        className={styles.sbDrawer}
         data-open={open}
         role="dialog"
         aria-modal="true"

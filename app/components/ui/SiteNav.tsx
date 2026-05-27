@@ -1,5 +1,5 @@
-import { Box, Flex, IconButton, Link } from "@radix-ui/themes";
-import { Hamburger } from "lucide-react";
+import { Flex, IconButton, Link, Separator } from "@radix-ui/themes";
+import { PanelRightOpen, PanelRightClose } from "lucide-react";
 import { useState } from "react";
 
 import { NW } from "./NW";
@@ -11,12 +11,39 @@ interface SiteNavProps {
   onMenuClick?: () => void;
 }
 
+
 export const SiteNav = ({ onMenuClick }: SiteNavProps = {}) => {
   const { theme } = useTheme();
   const [isChecked, setIsChecked] = useState(theme === "dark");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   const handleChecked = (value: boolean) => {
     setIsChecked(value);
   };
+
+  const handleSidebarToggle = () => {
+    setIsSidebarOpen((prev) => !prev);
+    onMenuClick?.();
+  };
+
+  function HamburgerButton({ onMenuClick, isSidebarOpen }: { onMenuClick?: () => void; isSidebarOpen: boolean }) {
+    if (!onMenuClick) return null;
+    return (
+      <Flex>
+        <IconButton
+          variant="ghost"
+          radius="full"
+          size="3"
+          onClick={onMenuClick}
+          aria-label="Open sidebar"
+        >
+          {isSidebarOpen ? <PanelRightOpen /> : <PanelRightClose />}
+
+        </IconButton>
+      </Flex>
+    );
+  }
+
 
   return (
     <Flex
@@ -25,10 +52,10 @@ export const SiteNav = ({ onMenuClick }: SiteNavProps = {}) => {
       align="center"
       mt={{ initial: "2" }}
       py={{ initial: "1" }}
-      px={{ initial: "6", lg: "0" }}
+      px={{ initial: "6" }}
       style={{
         transition: "var(--transition-stuff)",
-        backgroundColor: "var(--color-background)",
+        // backgroundColor: "var(--accent-2)",
         height: "4rem",
         width: "100%",
         // position: "sticky",
@@ -37,7 +64,7 @@ export const SiteNav = ({ onMenuClick }: SiteNavProps = {}) => {
         // zIndex: 5,
       }}
     >
-      <Flex align="center" justify="start" gapX={{ initial: "6" }}>
+      <Flex align="center" gapX={{ initial: "6" }}>
         <Link href="/beta/" target="_self">
           <NW
             style={{
@@ -52,21 +79,8 @@ export const SiteNav = ({ onMenuClick }: SiteNavProps = {}) => {
       </Flex>
       <Flex align="center" gap="3">
         <ThemeToggle checked={isChecked} onCheckedChange={handleChecked} />
-        {onMenuClick && (
-          <Box display={{ initial: "block", lg: "none" }}>
-            <IconButton
-              variant="ghost"
-              // color="gray"
-              radius="full"
-              size="3"
-              onClick={onMenuClick}
-              aria-label="Open sidebar"
-            >
-              {/* <Menu size={18} /> */}
-              <Hamburger />
-            </IconButton>
-          </Box>
-        )}
+        {onMenuClick && <Separator orientation="vertical" m="2" />}
+        {onMenuClick && <HamburgerButton onMenuClick={handleSidebarToggle} isSidebarOpen={isSidebarOpen} />}
       </Flex>
     </Flex>
   );

@@ -1,4 +1,4 @@
-import { Box, Container, Em, Flex, Heading, ScrollArea } from "@radix-ui/themes";
+import { Box, Container, Em, Flex, Heading, ScrollArea, Separator } from "@radix-ui/themes";
 import type * as PageTree from "fumadocs-core/page-tree";
 import type { TOCItemType } from "fumadocs-core/toc";
 import { useEffect, useState, type ReactNode } from "react";
@@ -35,6 +35,7 @@ export function NotesShell({ pageTree, toc, title, children }: NotesShellProps) 
 
   const sidebarContent = (
     <>
+      <Separator orientation="horizontal" mt="8" mb="8" />
       <Heading size="3" mb="4">
         Notes
       </Heading>

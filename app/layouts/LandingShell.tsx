@@ -39,18 +39,20 @@ function useHashScroll() {
 export function LandingShell({ pageTree, toc, title, children }: LandingShellProps) {
   useHashScroll();
   return (
-    <Flex direction="column" minHeight="100vh">
-      <SiteNav />
-      <Flex direction="row" minHeight="100vh">
-        <Box flexGrow="1" px="6" py="6" style={{ minWidth: 0 }}>
-          <Container size="3">
-            {/* <Heading as="h1" size="8" mb="5"> */}
-            {/* {title} */}
-            {/* </Heading> */}
-            {children}
-          </Container>
-        </Box>
+    <Container size="4" py="4">
+      <Flex direction="column" minHeight="100vh">
+        <SiteNav />
+        <Flex direction="row" minHeight="100vh">
+          <Box flexGrow="1" px="6" py="6" style={{ minWidth: 0 }}>
+            <Container size="3">
+              {/* <Heading as="h1" size="8" mb="5"> */}
+              {/* {title} */}
+              {/* </Heading> */}
+              {children}
+            </Container>
+          </Box>
+        </Flex>
       </Flex>
-    </Flex>
+    </Container>
   );
 }
