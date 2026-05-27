@@ -48,7 +48,7 @@ export function NotesShell({ pageTree, toc, title, children }: NotesShellProps) 
   return (
     <Container size="4" py="4">
       <Flex direction="column" minHeight="100vh">
-        <SiteNav onMenuClick={() => setDrawerOpen(true)} />
+        <SiteNav isSidebarOpen={drawerOpen} onToggleSidebar={() => setDrawerOpen(o => !o)} />
         <Flex direction="row" minHeight="100vh">
           <Box
             asChild

@@ -51,7 +51,7 @@ export function DocsShell({ pageTree, toc, title, children }: DocsShellProps) {
 
   return (
     <Flex direction="column" minHeight="100vh" style={{ backgroundColor: "var(--accent-2)" }}>
-      <SiteNav onMenuClick={() => setDrawerOpen(true)} />
+      <SiteNav isSidebarOpen={drawerOpen} onToggleSidebar={() => setDrawerOpen(o => !o)} />
       <Flex direction="row" minHeight="100vh">
         <Box
           asChild

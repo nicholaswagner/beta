@@ -1,9 +1,9 @@
 import {
   Blockquote,
-  Callout,
-  Code,
+  Flex,
   Heading,
   Kbd,
+  Quote,
   Link as RLink,
   Separator,
   Table,
@@ -38,6 +38,7 @@ function withBase(src: string | undefined): string | undefined {
   return base.replace(/\/$/, "") + src;
 }
 
+// oxlint-disable-next-line no-unused-vars
 function Anchor({ href = "#", children, color, ...rest }: ComponentPropsWithoutRef<"a">) {
   const isExternal = /^https?:\/\//.test(href);
   if (isExternal) {
@@ -105,6 +106,9 @@ export function getMDXComponents(extra?: MDXComponents): MDXComponents {
         />
       </span>
     ),
+    Quote,
+    Flex,
+    Separator,
     Callout: buildCallout,
     ObsidianCallout: buildObsidianCallout,
     ObsidianCalloutTitle: buildObsidianCalloutTitle,

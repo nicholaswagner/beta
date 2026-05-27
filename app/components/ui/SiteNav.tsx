@@ -8,36 +8,31 @@ import { BreadCrumbs } from "./BreadCrumbs/BreadCrumbs";
 import { ThemeToggle } from "./ThemeToggle/ThemeToggle";
 
 interface SiteNavProps {
-  onMenuClick?: () => void;
+  isSidebarOpen?: boolean;
+  onToggleSidebar?: () => void;
 }
 
 
-export const SiteNav = ({ onMenuClick }: SiteNavProps = {}) => {
+export const SiteNav = ({ isSidebarOpen, onToggleSidebar }: SiteNavProps = {}) => {
   const { theme } = useTheme();
   const [isChecked, setIsChecked] = useState(theme === "dark");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleChecked = (value: boolean) => {
     setIsChecked(value);
   };
 
-  const handleSidebarToggle = () => {
-    setIsSidebarOpen((prev) => !prev);
-    onMenuClick?.();
-  };
-
-  function HamburgerButton({ onMenuClick, isSidebarOpen }: { onMenuClick?: () => void; isSidebarOpen: boolean }) {
-    if (!onMenuClick) return null;
+  function HamburgerButton({ onToggle, isOpen }: { onToggle?: () => void; isOpen?: boolean }) {
+    if (!onToggle) return null;
     return (
       <Flex>
         <IconButton
           variant="ghost"
           radius="full"
           size="3"
-          onClick={onMenuClick}
-          aria-label="Open sidebar"
+          onClick={onToggle}
+          aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
         >
-          {isSidebarOpen ? <PanelRightOpen /> : <PanelRightClose />}
+          {isOpen ? <PanelRightOpen /> : <PanelRightClose />}
 
         </IconButton>
       </Flex>
@@ -79,8 +74,9 @@ export const SiteNav = ({ onMenuClick }: SiteNavProps = {}) => {
       </Flex>
       <Flex align="center" gap="3">
         <ThemeToggle checked={isChecked} onCheckedChange={handleChecked} />
-        {onMenuClick && <Separator orientation="vertical" m="2" />}
-        {onMenuClick && <HamburgerButton onMenuClick={handleSidebarToggle} isSidebarOpen={isSidebarOpen} />}
+        {isSidebarOpen !== undefined && onToggleSidebar && <Separator orientation="vertical" m="2" />}
+        {isSidebarOpen !== undefined && onToggleSidebar && <HamburgerButton onToggle={onToggleSidebar} isOpen={isSidebarOpen} />}
+
       </Flex>
     </Flex>
   );
