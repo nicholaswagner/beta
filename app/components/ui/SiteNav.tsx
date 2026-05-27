@@ -1,13 +1,17 @@
-import { Flex, Link } from "@radix-ui/themes";
+import { Box, Flex, IconButton, Link } from "@radix-ui/themes";
+import { Hamburger } from "lucide-react";
 import { useState } from "react";
 
-// import profileImage from "../../../assets/pixelized_profile.png";
 import { NW } from "./NW";
 import { useTheme } from "./ThemeContext";
-// import { BreadCrumbs } from "../breadcrumbs/BreadCrumbs";
+import { BreadCrumbs } from "./BreadCrumbs/BreadCrumbs";
 import { ThemeToggle } from "./ThemeToggle/ThemeToggle";
 
-export const SiteNav = () => {
+interface SiteNavProps {
+  onMenuClick?: () => void;
+}
+
+export const SiteNav = ({ onMenuClick }: SiteNavProps = {}) => {
   const { theme } = useTheme();
   const [isChecked, setIsChecked] = useState(theme === "dark");
   const handleChecked = (value: boolean) => {
@@ -21,7 +25,7 @@ export const SiteNav = () => {
       align="center"
       mt={{ initial: "2" }}
       py={{ initial: "1" }}
-      px={{ initial: "6" }}
+      px={{ initial: "6", lg: "0" }}
       style={{
         transition: "var(--transition-stuff)",
         backgroundColor: "var(--color-background)",
@@ -33,7 +37,7 @@ export const SiteNav = () => {
         // zIndex: 5,
       }}
     >
-      <Flex align="center" gapX={{ initial: "6" }}>
+      <Flex align="center" justify="start" gapX={{ initial: "6" }}>
         <Link href="/beta/" target="_self">
           <NW
             style={{
@@ -44,9 +48,26 @@ export const SiteNav = () => {
             className="nwLink"
           />
         </Link>
-        {/* <BreadCrumbs /> */}
+        <BreadCrumbs />
       </Flex>
-      <ThemeToggle checked={isChecked} onCheckedChange={handleChecked} />
+      <Flex align="center" gap="3">
+        <ThemeToggle checked={isChecked} onCheckedChange={handleChecked} />
+        {onMenuClick && (
+          <Box display={{ initial: "block", lg: "none" }}>
+            <IconButton
+              variant="ghost"
+              // color="gray"
+              radius="full"
+              size="3"
+              onClick={onMenuClick}
+              aria-label="Open sidebar"
+            >
+              {/* <Menu size={18} /> */}
+              <Hamburger />
+            </IconButton>
+          </Box>
+        )}
+      </Flex>
     </Flex>
   );
 };

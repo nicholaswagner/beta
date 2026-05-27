@@ -12,32 +12,32 @@ interface ThemeContextInterface {
 }
 
 const accentColors = [
-  // "amber",
-  // "blue",
+  "amber",
+  "blue",
   "bronze",
-  // "brown",
-  // "crimson",
-  // "cyan",
-  // "gold",
-  // "grass",
-  // "gray",
-  // "green",
-  // "indigo",
-  // "iris",
-  // "jade",
-  // "lime",
-  // "mint",
-  // "orange",
-  // "pink",
-  // "plum",
-  // "purple",
-  // "red",
-  // "ruby",
-  // "sky",
-  // "teal",
-  // "tomato",
-  // "violet",
-  // "yellow",
+  "brown",
+  "crimson",
+  "cyan",
+  "gold",
+  "grass",
+  "gray",
+  "green",
+  "indigo",
+  "iris",
+  "jade",
+  "lime",
+  "mint",
+  "orange",
+  "pink",
+  "plum",
+  "purple",
+  "red",
+  "ruby",
+  "sky",
+  "teal",
+  "tomato",
+  "violet",
+  "yellow",
 ] as const;
 
 const ThemeContext = createContext<ThemeContextInterface | undefined>(undefined);
@@ -80,8 +80,8 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
   const themeProps: ThemeProps = {
     appearance: colorScheme,
-    accentColor: "gray",
-    // accentColors[Math.floor(Math.random() * accentColors.length - 1)],
+    // accentColor: "pink",
+    accentColor: accentColors[Math.floor(Math.random() * accentColors.length - 1)],
     grayColor: "auto",
     panelBackground: "translucent",
     scaling: "95%",
@@ -92,10 +92,10 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     <ThemeContext.Provider value={{ theme: colorScheme, themeProps, setTheme, toggleTheme }}>
       <Theme
         appearance={colorScheme}
-        // accentColor={
-        // accentColors[Math.floor(Math.random() * accentColors.length - 1)]
-        // }
-        accentColor="gray"
+        accentColor={
+          accentColors[Math.floor(Math.random() * accentColors.length - 1)]
+        }
+        // accentColor="pink"
         grayColor="auto"
         panelBackground="translucent"
         scaling="95%"

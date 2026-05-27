@@ -82,7 +82,12 @@ export default defineConfig({
       addLanguageClass: true,
       transformers: [
         ...(rehypeCodeDefaultOptions.transformers ?? []),
-        transformerNotationErrorLevel(), // `// [!code error]` / `// [!code warning]`
+        // `matchAlgorithm: "v1"` — `@shikijs/transformers@4.x` defaults to "v3",
+        // which only scans the trailing tokens on a line. Shiki tokenizes
+        // `// [!code error]` into multiple spans (the `!` and brackets break
+        // apart under the TypeScript grammar), so v3 fails to match. v1 scans
+        // every token and matches reliably.
+        transformerNotationErrorLevel({ matchAlgorithm: "v1" }),
         transformerMetaHighlight(), // fence meta `{1,3-5}`
         transformerLiftFumaFlags(), // reads `data-no-copy` / `data-no-header`
       ],

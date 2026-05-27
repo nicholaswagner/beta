@@ -1,7 +1,6 @@
-import { Box, Container, Em, Flex, Heading, IconButton, ScrollArea } from "@radix-ui/themes";
+import { Box, Container, Em, Flex, Heading, ScrollArea } from "@radix-ui/themes";
 import type * as PageTree from "fumadocs-core/page-tree";
 import type { TOCItemType } from "fumadocs-core/toc";
-import { Menu } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { useLocation } from "react-router";
 
@@ -36,6 +35,9 @@ export function NotesShell({ pageTree, toc, title, children }: NotesShellProps) 
 
   const sidebarContent = (
     <>
+      <Heading size="3" mb="4">
+        Notes
+      </Heading>
       <Box px="2" pb="4">
         <Sidebar tree={pageTree} collapsible defaultOpenPath={pathname} />
       </Box>
@@ -45,26 +47,7 @@ export function NotesShell({ pageTree, toc, title, children }: NotesShellProps) 
   return (
     <Container size="4" py="4">
       <Flex direction="column" minHeight="100vh">
-        <SiteNav />
-        <Box
-          display={{ initial: "block", lg: "none" }}
-          style={{
-            position: "fixed",
-            top: "0.75rem",
-            right: "0.75rem",
-            zIndex: 40,
-          }}
-        >
-          <IconButton
-            variant="soft"
-            color="gray"
-            size="2"
-            onClick={() => setDrawerOpen(true)}
-            aria-label="Open notes sidebar"
-          >
-            <Menu size={18} />
-          </IconButton>
-        </Box>
+        <SiteNav onMenuClick={() => setDrawerOpen(true)} />
         <Flex direction="row" minHeight="100vh">
           <Box
             asChild

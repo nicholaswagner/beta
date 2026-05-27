@@ -22,6 +22,18 @@ A bullet list
 
 ---
 
+```mermaid
+  radar-beta
+    title Level 5 Character
+    axis str["STR"], dex["DEX"], con["CON"], int["INT"], wis["WIS"], cha["CHA"]
+    curve stats["My Stats"]{4, 1, 4, 1, 0, 2}
+    max 5
+    min 0
+     graticule polygon
+```
+
+---
+
 ## Other things and stuff
 
 <mark> Highlighted text </mark>

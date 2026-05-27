@@ -59,7 +59,46 @@ function MermaidContent({ chart }: { chart: string }) {
     startOnLoad: false,
     securityLevel: 'loose',
     fontFamily: 'inherit',
-    themeCSS: 'margin: 1.5rem auto 0;',
+    themeCSS: `
+      margin: 1.5rem auto 0;
+
+      /* Radar (radar-beta) — use Radix tokens so the chart matches the
+         site's accent + gray scales in both light and dark themes. */
+      .radarGraticule {
+        fill: transparent;
+        stroke: var(--gray-6);
+        stroke-width: 1px;
+      }
+      .radarAxisLine {
+        stroke: var(--gray-7);
+        stroke-width: 1px;
+      }
+      .radarAxisLabel {
+        fill: var(--gray-12);
+        color: var(--gray-12);
+        font-size: var(--font-size-2);
+      }
+      .radarTitle {
+        fill: var(--gray-12);
+        color: var(--gray-12);
+        font-size: var(--font-size-4);
+        font-weight: 600;
+      }
+      [class^="radarCurve-"], [class*=" radarCurve-"] {
+        fill: var(--accent-a4);
+        stroke: var(--accent-9);
+        stroke-width: 2px;
+      }
+      [class^="radarLegendBox-"], [class*=" radarLegendBox-"] {
+        fill: var(--accent-9);
+        stroke: var(--accent-9);
+      }
+      .radarLegendText {
+        fill: var(--gray-11);
+        color: var(--gray-11);
+        font-size: var(--font-size-1);
+      }
+    `,
     theme: theme === 'dark' ? 'dark' : 'default',
   });
 

@@ -1,0 +1,22 @@
+.breadcrumbs {
+	display: flex;
+	flex-direction: row;
+	ol {
+		color: var(--gray-6);
+		list-style: none;
+		display: inline-flex;
+		flex-direction: row;
+		padding-inline-start: 0;
+	}
+	li {
+		text-transform: capitalize;
+	}
+}
+
+.link {
+	color: var(--gray-10);
+	transition: color 0.4s ease;
+	&:hover {
+		color: var(--gray-11);
+	}
+}

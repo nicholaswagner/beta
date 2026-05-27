@@ -13,9 +13,7 @@ export type Source = typeof source;
 export function getNotesTree(): PageTree.Root {
   const notes = findNotesFolder(source.pageTree.children);
   if (!notes) return { name: "Notes", children: [] };
-  // Wrap in a synthetic parent so the sidebar renders "notes" as a visible
-  // top-level folder (the root's name is never rendered by Sidebar).
-  return { name: "Notes", children: [notes] };
+  return { name: "Notes", children: notes.children };
 }
 
 function findNotesFolder(nodes: PageTree.Node[]): PageTree.Folder | undefined {

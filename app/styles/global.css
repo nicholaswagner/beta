@@ -222,7 +222,7 @@ figure.shiki button {
   display: inline-block;
   position: relative;
   line-height: 0;
-  background: #42a4ff;
+  background: var(--accent-9);
 }
 
 .image-container::after {
@@ -233,7 +233,7 @@ figure.shiki button {
   top: 0;
   left: 0;
   mix-blend-mode: lighten;
-  background: #002a8c;
+  background: var(--color-background);
   opacity: 1;
 }
 
