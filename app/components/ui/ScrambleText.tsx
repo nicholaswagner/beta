@@ -1,7 +1,7 @@
 import { Text } from "@radix-ui/themes";
 import type { TextProps } from "@radix-ui/themes";
-import { Children, useEffect, useRef } from "react";
-import type { CSSProperties, ReactNode } from "react";
+import { useEffect, useRef } from "react";
+import type { CSSProperties } from "react";
 
 import type { ScrambleOptions } from "~/hooks/useScrambleText";
 import { useScrambleText } from "~/hooks/useScrambleText";
@@ -16,43 +16,27 @@ const defaults: ScrambleOptions = {
   mode: "word",
 };
 
+/**
+ * Visual treatment matches the live `/labs/cv` demo:
+ *   - monospace + uppercase + 0.1em letter-spacing
+ *   - 1ch/.1em repeating-linear-gradient stripe in `--accent-3` behind glyphs
+ *   - `display: inline` so the box flows + wraps with its container; monospace
+ *     guarantees each character cell stays a constant width, so the scramble
+ *     animation doesn't shift sibling layout
+ */
 const scrambleStyle: CSSProperties = {
   color: "var(--gray-12)",
   fontFamily: "monospace",
   textTransform: "uppercase",
   letterSpacing: "0.1em",
   background: `repeating-linear-gradient(
-					to right,
-					var(--accent-3) 0,
-					var(--accent-3) 1ch,
-					transparent 1ch,
-					transparent calc(1ch + 0.1em)
-				  )`,
-  // `inline-block` is what lets `min-width` apply at all on an otherwise
-  // inline `<Text>`. `vertical-align: baseline` keeps it on the line with
-  // neighboring text instead of getting bumped by inline-block default.
-  display: "inline-block",
-  verticalAlign: "baseline",
-  // `min-width` is computed below from the rest length of `children`. We
-  // set it via `--scramble-width` so the calc is in one place.
-  minWidth: "calc(var(--scramble-width-ch, 0) * 1ch + (var(--scramble-width-ch, 0) - 1) * 0.1em)",
+    to right,
+    var(--accent-3) 0,
+    var(--accent-3) 1ch,
+    transparent 1ch,
+    transparent calc(1ch + 0.1em)
+  )`,
 };
-
-/**
- * Stringify ReactNode children to count rest-state characters. The hook
- * captures `el.textContent` at trigger time, so this mirrors what it sees.
- * If the children include non-text nodes we fall back to 0 (no min-width) —
- * the animation can shift in that case, but it's the long-tail.
- */
-function childrenToText(node: ReactNode): string {
-  let out = "";
-  Children.forEach(node, (child) => {
-    if (typeof child === "string" || typeof child === "number") {
-      out += String(child);
-    }
-  });
-  return out;
-}
 
 export const ScrambleText = ({
   children,
@@ -60,51 +44,39 @@ export const ScrambleText = ({
   ...props
 }: Partial<TextProps> & Partial<ScrambleOptions>) => {
   const ref = useRef<HTMLElement | null>(null);
-  const trigger = useScrambleText(ref, {
-    ...defaults,
-    ...props,
-  });
+  const trigger = useScrambleText(ref, { ...defaults, ...props });
+  const { theme } = useTheme();
 
-  const restLen = childrenToText(children).length;
-
-  const { themeProps } = useTheme();
-
+  /**
+   * Re-play whenever the user toggles light/dark. We depend on the stable
+   * `theme: "light" | "dark"` string rather than `themeProps` because
+   * `ThemeContext` regenerates `themeProps` with a fresh random accent on
+   * every render — depending on it would make the scramble re-fire on every
+   * unrelated parent re-render.
+   */
   useEffect(() => {
-    if (!ref.current || themeProps) return;
     trigger();
-  }, [themeProps]);
+  }, [theme, trigger]);
 
+  /**
+   * Re-play every time the element scrolls into view (≥ 25% visible).
+   * The observer's callback runs once per entry transition, so this won't
+   * restart while the user is sitting on the element.
+   */
   useEffect(() => {
+    if (!ref.current) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          trigger();
-        }
+        if (entry.isIntersecting) trigger();
       },
       { threshold: 0.25 },
     );
-    if (ref.current) {
-      observer.observe(ref.current);
-    }
-    return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current);
-      }
-    };
+    observer.observe(ref.current);
+    return () => observer.disconnect();
   }, [trigger]);
 
   return (
-    <Text
-      ref={ref}
-      style={
-        {
-          ...scrambleStyle,
-          "--scramble-width-ch": restLen || 0,
-          ...style,
-        } as CSSProperties
-      }
-      {...props}
-    >
+    <Text ref={ref} style={{ ...scrambleStyle, ...style }} {...props}>
       {children}
     </Text>
   );

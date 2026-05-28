@@ -32,6 +32,16 @@ export function useScrambleText<T extends HTMLElement | null>(
   const originalTextRef = useRef<string | null>(null);
   const startTimeRef = useRef<number>(0);
 
+  /**
+   * Latch `options` into a ref so `trigger`'s identity stays stable across
+   * renders. Without this, every call site passing an inline `{...options}`
+   * object would churn `trigger` (and the autoPlay effect that depends on
+   * it) on every parent re-render — exactly the render-instability symptom
+   * we're trying to fix.
+   */
+  const optionsRef = useRef(options);
+  optionsRef.current = options;
+
   const trigger = useCallback(() => {
     const el = ref.current;
     if (!el) return;
@@ -49,7 +59,7 @@ export function useScrambleText<T extends HTMLElement | null>(
       mode = "char",
       onDone,
       shuffle = false,
-    } = options;
+    } = optionsRef.current;
 
     const ease =
       typeof easing === "function" ? easing : EASING_PRESETS[easing] || EASING_PRESETS.linear;
@@ -108,10 +118,10 @@ export function useScrambleText<T extends HTMLElement | null>(
       startTimeRef.current = performance.now();
       frameRef.current = requestAnimationFrame(animate);
     }, delay);
-  }, [ref, options]);
+  }, [ref]);
 
   useEffect(() => {
-    if (options.autoPlay) {
+    if (optionsRef.current.autoPlay) {
       trigger();
     }
 
@@ -119,7 +129,11 @@ export function useScrambleText<T extends HTMLElement | null>(
       if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
       if (delayTimeoutRef.current !== null) clearTimeout(delayTimeoutRef.current);
     };
-  }, [trigger, options.autoPlay]);
+    // Intentionally mount-only: `trigger` is stable, and re-running on
+    // `options.autoPlay` flips would restart mid-scroll. The component
+    // wrapper handles re-trigger policy (e.g. on intersection).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trigger]);
 
   return trigger;
 }

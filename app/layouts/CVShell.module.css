@@ -6,11 +6,13 @@
  * Mirrors the helper trio from the older CV project:
  *   - `.printable`     show only in print
  *   - `.notPrintable`  hide in print
- *   - `.experienceList` bullet list w/ tighter print spacing + page-break guard
+ *   - `.experienceList` print-only page-break guard on its child `<li>`s
  */
 
 .cvShell {
-  /* Wrapper carries the print-mode token rescale. */
+  /* Token rescale is scoped to `.cvShell` *on purpose* — printing /notes/*
+     or /index should not pick up the 0.75x shrink. The original site applies
+     it globally on `.radix-themes`; we intentionally diverge. */
   @media print {
     --scaling: 0.75;
     --font-size-1: calc(8px * var(--scaling));
@@ -67,43 +69,9 @@
 }
 
 .experienceList {
-  margin-block-start: 0;
-  padding-inline-start: 0;
-
-  /* Tighten the bullets fed to us from `mdxComponents.tsx` — smaller text,
-     less line-height, gray marker. Lives here instead of in `mdxComponents`
-     so /notes pages keep their roomier prose styling. */
-  & ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  & li {
-    position: relative;
-    padding-left: 1.1rem;
-    margin-bottom: 0.5rem;
-    font-size: var(--font-size-3);
-    line-height: var(--line-height-4);
-    color: var(--gray-12);
-  }
-  & li::before {
-    content: "•";
-    position: absolute;
-    left: 0.2rem;
-    top: -0.05em;
-    font-size: 1.1em;
-    line-height: 1;
-    color: var(--accent-10);
-  }
-  /* Nested bullets — slightly less prominent. */
-  & li li {
-    font-size: var(--font-size-1);
-    margin-top: 0.25rem;
-  }
-  & p {
-    margin: 0;
-  }
-
+  /* Keeps page-break behavior tight so a role's bullets don't split
+     mid-list when printing. Bullet typography itself comes from the
+     global `mdxComponents` mapping. */
   @media print {
     & li {
       margin-bottom: 0.3rem;
@@ -112,15 +80,96 @@
   }
 }
 
-/* Single experience block — keep role + bullets together when printing. */
+/* Single experience block — keep role + bullets together across fragmentation.
+   Unconditional (not gated to @media print) so any future fragmentation
+   context (multi-column, paged-media polyfill) honors it too. */
 .experienceBlock {
-  @media print {
-    break-inside: avoid;
-  }
+  break-inside: avoid;
 }
 
 .experienceSeparator {
   background-color: var(--gray-5);
+}
+
+/* Hint to the print engine: don't put a page break immediately after this
+   separator — prevents the orphaned-divider-at-page-bottom case. Applied
+   to the inter-experience and inter-link `<Separator>` instances. */
+.noBreakAfter {
+  break-after: avoid;
+}
+
+/* ---------- Print-mode layout overrides ------------------------------------
+
+   Force the 2-column row layout in print regardless of the user's viewport.
+   Radix's responsive utility classes (`rt-r-fd-column`, `sm:rt-r-fd-row`,
+   etc.) are scoped to screen media queries by their cascade ordering, so
+   we need `!important` to defeat them inside `@media print`. */
+
+.cvLayoutRow {
+  /* Screen styling comes from the Radix responsive `direction` prop on the
+     same element. This class is the hook for the print override below. */
+}
+
+.leftCol {
+  /* Stack children vertically. We layer `.notPrintable` on top of this
+     class (for the print toggle), and `.notPrintable` declares
+     `display: flex` — without an explicit `flex-direction: column` here,
+     the bio paragraph + separators + link list would all sit on one row. */
+  flex-direction: column;
+}
+
+/* Sticky only when there's a separate right-column scrolling beside us
+   (i.e. the responsive flex has flipped to row). Below `sm` (768px) the
+   layout is stacked, so sticking the bio to the top would pin it over the
+   experience section as the user scrolls — exactly the wrong behavior.
+   Mirrors Radix Themes' `sm` breakpoint (768px). */
+@media (min-width: 768px) {
+  .leftCol {
+    position: sticky;
+    top: var(--space-6);
+    align-self: flex-start;
+  }
+}
+
+.rightCol {
+  /* Print override below stretches this to 100% once `.leftCol` is hidden. */
+}
+
+.roleInner {
+  /* Inner role-meta/bullets flex. Print forces row + 30/70 width split
+     regardless of where the screen `lg` breakpoint sits. */
+}
+
+@media print {
+  /* The left bio/links column is hidden by `.notPrintable` (a duplicate of
+     its contents is emitted as a print-only footer below the experience
+     section), so the experience column can claim the full page width. */
+  .cvLayoutRow > .rightCol {
+    width: 100% !important;
+  }
+  /* Inner role-meta/bullets row stays a row, with a 30/70 split so the
+     role-meta column never collapses to full-width just because the print
+     viewport sits below the `lg` Radix breakpoint where the row widths
+     are defined on screen. Selecting by structural position keeps it
+     coupled to the actual children rather than a per-element class. */
+  .roleInner {
+    flex-direction: row !important;
+  }
+  .roleInner > *:first-child {
+    width: 30% !important;
+  }
+  .roleInner > *:nth-child(2) {
+    width: 70% !important;
+    margin-top: 0 !important;
+  }
+}
+
+/* Print-only footer (bio + links repositioned below the experience timeline).
+   Kept whole across page breaks; small breathing room above. */
+.printFooter {
+  flex-direction: column !important;
+  margin-top: var(--space-6);
+  break-inside: avoid;
 }
 
 /* Page-level print resets — no transitions, full bleed. Scoped via descendant
@@ -132,4 +181,23 @@
   .cvShell * {
     transition: none !important;
   }
+}
+
+/* ---------- @page paper sizing -----------------------------------------------
+
+   Named-page rule: only elements that opt in via `page: cv-page` use these
+   dimensions. `.cvShell` sets that property below — so this rule only fires
+   when the user prints from `/cv`. Printing `/notes/...` keeps the browser
+   default (typically the OS print-dialog selection).
+
+   `letter portrait` is the standard US 8.5" × 11" sheet. `12mm` ≈ 0.47" of
+   margin all around, slightly tighter than the browser default to give the
+   2-column layout more room. */
+@page cv-page {
+  size: letter portrait;
+  margin: 12mm;
+}
+
+.cvShell {
+  page: cv-page;
 }

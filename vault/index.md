@@ -3,6 +3,8 @@ title: nicholaswagner.dev
 description: A site sourced from an Obsidian vault.
 ---
 
+<div align="center">
+
 ```mermaid
 ---
 config:
@@ -17,7 +19,7 @@ config:
   themeVariables:
     radar:
       curveOpacity: 1
-      graticuleColor: purple
+      graticuleColor: grey
 ---
 radar-beta
   axis str["STR"], dex["DEX"], con["CON"], int["INT"], wis["WIS"], cha["CHA"]
@@ -27,6 +29,8 @@ radar-beta
   graticule polygon
   ticks 4
 ```
+
+</div>
 
 ---
 
