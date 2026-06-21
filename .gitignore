@@ -1,3 +1,4 @@
+AGENTS.md
 node_modules
 
 # Build output
@@ -14,14 +15,8 @@ public/*
 !public/.nojekyll
 !public/.gitkeep
 
-# Ignore all dotfiles except .gitignore
+# Dotfiles
 .*
 !.gitignore
 !.github
-
-# AI-generated content
-AGENTS.md
-ICEBOX.md
-Fumadocs.md
-
 !.devcontainer

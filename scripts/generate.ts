@@ -1,4 +1,4 @@
-import { readdir, rm } from "node:fs/promises";
+import { readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 import { fromVault } from "fumadocs-obsidian";
@@ -38,5 +38,14 @@ await fromVault({
 // Generate landing pages for folders that don't have a hand-authored
 // `index.md` in `vault/`. Hand-authored always wins.
 await synthesizeFolderIndexes({ root: "content" });
+
+// Surface the repo README as a note. We write into the generated `content`
+// dir (not the watched `vault`) so the dev-mode watcher doesn't re-trigger
+// generate in a loop. Add the `title` frontmatter that vault notes carry.
+const readme = await readFile("README.md", "utf8");
+await writeFile(
+  join("content", "notes", "readme.mdx"),
+  `---\ntitle: readme\n---\n${readme}`,
+);
 
 console.log("Generated MDX from vault...");
