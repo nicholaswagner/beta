@@ -40,12 +40,22 @@ html,
 body {
   margin: 0;
   padding: 0;
-  background-color: var(--color-background);
+  /* background-color: var(--color-background); */
   color: var(--gray-12);
   min-height: 100%;
   transition: var(--transition-stuff);
 
   @media print {
+    @page {
+      margin: 0;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
     height: 100%;
     width: 100%;
     opacity: 1;
@@ -241,4 +251,47 @@ figure.shiki button {
   -webkit-filter: contrast(120%) grayscale(100%) hue-rotate(0deg) invert(0%) opacity(100%) saturate(100%) sepia(0%);
   filter: contrast(120%) grayscale(100%) hue-rotate(0deg) invert(0%) opacity(100%) saturate(100%) sepia(0%);
   mix-blend-mode: multiply;
+}
+
+.no-print {
+  @media print {
+    display: none !important;
+  }
+}
+
+.print-only {
+  display: none !important;
+
+  @media print {
+    display: inherit !important;
+  }
+}
+
+.profile-column-blurb {
+
+  @media print {
+    margin-bottom: var(--space-6);
+    /* Avoid breaking the blurb across pages. */
+    page-break-inside: avoid;
+  }
+}
+
+/* `.glow` wraps the whole app, so it stays a normal flow wrapper. The glow
+   itself is painted by a fixed pseudo-element layered ABOVE the content — a
+   background on `.glow` directly would sit behind its own children (and behind
+   Radix's opaque `.radix-themes` background), so it'd never be visible. */
+.glow::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  pointer-events: none;
+  background:
+    radial-gradient(1000px 700px at 75% -10%, var(--accent-a3), transparent 60%),
+    radial-gradient(800px 600px at 10% 10%, var(--accent-a1), transparent 55%),
+    radial-gradient(900px 700px at 50% 110%, var(--accent-a2), transparent 60%);
+
+  /* background: radial-gradient(1000px 700px at 75% -10%, rgba(110, 139, 255, 0.17), transparent 60%),
+    radial-gradient(800px 600px at 10% 10%, rgba(52, 211, 153, 0.07), transparent 55%),
+    radial-gradient(900px 700px at 50% 110%, rgba(110, 139, 255, 0.08), transparent 60%); */
 }

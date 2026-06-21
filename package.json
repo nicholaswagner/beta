@@ -9,7 +9,7 @@
     "lint:fix": "oxlint . --fix",
     "generate": "bun scripts/generate.ts",
     "postinstall": "fumadocs-mdx",
-    "dev:server": "react-router dev --host",
+    "dev:server": "react-router dev --host --port 1337",
     "dev:watch": "watchexec -w vault --exts md,mdx -- bun run generate",
     "dev": "concurrently -n watchexec,dev 'bun run dev:watch' 'bun run dev:server'",
     "build": "bun run generate && bun scripts/buildSearchIndex.ts && react-router build && cp build/client/index.html build/client/404.html && touch build/client/.nojekyll",
@@ -17,6 +17,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
     "@orama/orama": "^3.1.18",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/themes": "^3.3.0",
@@ -25,6 +26,7 @@
     "fumadocs-mdx": "^15.0.8",
     "fumadocs-obsidian": "^0.1.0",
     "fumadocs-ui": "^16.9.1",
+    "gsap": "^3.15.0",
     "isbot": "^5.1.17",
     "lucide-react": "^1.16.0",
     "mermaid": "^11.15.0",

@@ -1,0 +1,23 @@
+/* Wrapper styling for the scramble text. Mono / uppercase, accent foreground.
+   Per-character backgrounds are applied to the SplitText `.char` elements below
+   (replacing the old single `repeating-linear-gradient` fake). */
+.scramble {
+  /* color: var(--accent-contrast); */
+  /* color: var(--grey-11); */
+  /* line-height: var(--line-height-3); */
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  user-select: none;
+}
+
+/* Each character becomes its own SplitText element with a solid block behind it.
+   `letter-spacing` on the wrapper supplies the ~0.1em gap between blocks, so the
+   blocks read as discrete cells rather than one continuous bar. */
+.char {
+  display: inline-block;
+  /* background: var(--accent-3); */
+  /* background: var(--accent-10); */
+  /* margin-right: 0.1em; */
+  padding: 0.01em;
+  pointer-events: none;
+}

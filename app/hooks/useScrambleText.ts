@@ -1,167 +1,210 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText } from "gsap/SplitText";
+import { useCallback, useRef } from "react";
 import type { RefObject } from "react";
 
-type EasingName =
-  | "linear"
-  | "easeInQuad"
-  | "easeOutQuad"
-  | "easeInOutQuad"
-  | "easeInOut"
-  | "easeOutCubic"
-  | "easeOutExpo";
-
-type ScrambleMode = "char" | "word";
+// Register once at module scope. `useGSAP` is itself a plugin and must be
+// registered before the hook runs. All GSAP plugins are free (public `gsap`
+// package) since the Webflow acquisition.
+gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
 
 export type ScrambleOptions = {
-  autoPlay?: boolean;
+  /** Scramble character pool. Accepts a literal string of glyphs, or one of the
+   *  keywords "upperCase" | "lowerCase" | "upperAndLowerCase". */
   chars?: string;
-  delay?: number;
+  /** Total decode duration, in seconds. */
   duration?: number;
-  easing?: EasingName | ((t: number) => number);
-  mode?: ScrambleMode;
+  /** Churn speed of unresolved characters (higher = faster re-roll). */
+  speed?: number;
+  /** Tween ease for the reveal wavefront. */
+  ease?: string;
+  /** ScrollTrigger `start` for the scroll-into-view replay. */
+  scrollStart?: string;
+  /** CSS class applied to each split character (per-char background lives here). */
+  charsClass?: string;
+  /** Lead delay for this instance, in seconds. Omit to get a small random
+   *  offset so multiple instances on a page cascade instead of firing in sync. */
+  offset?: number;
+  /** Fired when the scramble finishes. */
   onDone?: () => void;
-  shuffle?: boolean;
 };
 
+const DEFAULTS = {
+  // Uppercase + digits: the text is rendered uppercase, so this is the visible
+  // texture. Mirrors the demo's mixed alphanumeric churn.
+  chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789░░░░░░░░░░░░░░░░░░░░░",
+  duration: 0.8,
+  speed: 1,
+  ease: "sine.in",
+  scrollStart: "top 85%",
+} satisfies Partial<ScrambleOptions>;
+
+const CHAR_PRESETS: Record<string, string> = {
+  upperCase: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+  lowerCase: "abcdefghijklmnopqrstuvwxyz",
+  upperAndLowerCase: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+};
+
+const randomGlyph = (pool: string) => pool[(Math.random() * pool.length) | 0];
+
+/**
+ * GSAP-powered scramble-in text. Splits the target into per-character elements
+ * (so each glyph can carry its own background), then runs a single coordinated
+ * "decode" reveal across them: the head resolves to the real text while the
+ * unresolved tail keeps churning random characters, the boundary sweeping
+ * left-to-right. Only each span's `textContent` is touched (never the parent's
+ * `innerHTML`), so the per-character background blocks survive the animation.
+ *
+ * The returned `replay()` restarts the timeline; scroll-into-view replays are
+ * wired internally via ScrollTrigger. Honors `prefers-reduced-motion` (no
+ * scramble — original text is shown) and snaps to final text before printing.
+ */
 export function useScrambleText<T extends HTMLElement | null>(
   ref: RefObject<T>,
   options: ScrambleOptions = {},
 ) {
-  const delayTimeoutRef = useRef<number | null>(null);
-  const frameRef = useRef<number | null>(null);
-  const originalTextRef = useRef<string | null>(null);
-  const startTimeRef = useRef<number>(0);
+  const opts = { ...DEFAULTS, ...options };
 
-  /**
-   * Latch `options` into a ref so `trigger`'s identity stays stable across
-   * renders. Without this, every call site passing an inline `{...options}`
-   * object would churn `trigger` (and the autoPlay effect that depends on
-   * it) on every parent re-render — exactly the render-instability symptom
-   * we're trying to fix.
-   */
-  const optionsRef = useRef(options);
-  optionsRef.current = options;
+  // One paused timeline, driven by two callers (scroll + theme). Held in a ref
+  // so `replay()` can reach it without re-running the GSAP setup.
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
 
-  const trigger = useCallback(() => {
-    const el = ref.current;
-    if (!el) return;
+  // Stable per-instance lead delay. Generated once; `gsap.utils.random` gives a
+  // small offset so stacked instances don't fire in lockstep.
+  const offsetRef = useRef(options.offset ?? gsap.utils.random(0, 0.25));
 
-    if (originalTextRef.current == null) {
-      originalTextRef.current = el.textContent || "";
-    }
+  // Latch options so the GSAP setup (mount-only) always reads current values
+  // without listing them as deps and re-running.
+  const optsRef = useRef(opts);
+  optsRef.current = opts;
 
-    const originalText = originalTextRef.current;
-    const {
-      chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789R",
-      delay = 0,
-      duration = 2000,
-      easing = "easeOutCubic",
-      mode = "char",
-      onDone,
-      shuffle = false,
-    } = optionsRef.current;
+  useGSAP(
+    () => {
+      const el = ref.current;
+      if (!el) return;
 
-    const ease =
-      typeof easing === "function" ? easing : EASING_PRESETS[easing] || EASING_PRESETS.linear;
+      // Gate the whole animation behind reduced-motion. When the user prefers
+      // reduced motion this block never runs: `tlRef` stays null, nothing is
+      // split, and the original text (already in the DOM) is what's shown.
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        const { chars, duration, speed, ease, scrollStart, charsClass, onDone } = optsRef.current;
 
-    const originalUnits =
-      mode === "word" ? (originalText.match(/\S+|\s+/g) ?? []) : Array.from(originalText);
+        const split = SplitText.create(el, {
+          type: "words,chars",
+          charsClass,
+          aria: "auto",
+        });
 
-    const joiner = "";
+        // SplitText sets `aria-label` on `el` (the full text) and `aria-hidden`
+        // on the per-char cells. But `aria-label` is prohibited on a bare
+        // generic element (axe `aria-prohibited-attr` / WCAG 4.1.2), so pair it
+        // with a role that accepts an author-supplied name. `role="text"`
+        // collapses the split cells back into a single flat string for AT.
+        // Removed on cleanup; never set under reduced-motion (this block is
+        // gated behind it), where the plain text is shown instead.
+        el.setAttribute("role", "text");
 
-    const length = originalUnits.length;
-    const indices = Array.from({ length }, (_, i) => i);
+        // SplitText treats every space as a word delimiter, so the gap between
+        // words is left as a bare text node — never its own char cell. Wrap each
+        // gap in a matching cell (rendered as a non-breaking space so its width
+        // survives when resolved) so spaces churn too and fill the gap during
+        // the scramble. SplitText has already set el's aria-label to the full
+        // text, and these cells are aria-hidden, so screen readers are fine.
+        for (const node of Array.from(el.childNodes)) {
+          if (node.nodeType === Node.TEXT_NODE && (node.nodeValue ?? "").trim() === "") {
+            const cell = document.createElement("div");
+            if (charsClass) cell.className = charsClass;
+            cell.setAttribute("aria-hidden", "true");
+            cell.style.position = "relative";
+            cell.style.display = "inline-block";
+            cell.textContent = " ";
+            el.replaceChild(cell, node);
+          }
+        }
 
-    if (shuffle) {
-      for (let i = indices.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [indices[i], indices[j]] = [indices[j], indices[i]];
-      }
-    }
+        // Capture target glyphs up front so a restart always resolves to the
+        // real text, never a leftover frame from an interrupted run. Query in
+        // DOM order so the wrapped space cells land in their right positions.
+        const cells = charsClass
+          ? Array.from(el.querySelectorAll<HTMLElement>(`.${charsClass}`))
+          : (split.chars as HTMLElement[]);
+        const original = cells.map((c) => c.textContent ?? "");
+        const pool = CHAR_PRESETS[chars] ?? chars;
+        const count = original.length;
 
-    const scrambled = originalUnits.map((unit) =>
-      shouldPreserve(unit, mode) ? unit : scrambleUnit(unit.length, chars, mode),
-    );
+        // Re-roll cadence: higher `speed` churns faster. onUpdate runs ~once per
+        // frame, so this throttles how often unresolved glyphs change.
+        const churnEvery = Math.max(1, Math.round(2 / speed));
 
-    el.textContent = scrambled.join(joiner);
+        const setCell = (i: number, value: string) => {
+          if (cells[i].textContent !== value) cells[i].textContent = value;
+        };
+        // Scramble every cell to a random glyph (the churning tail).
+        const scrambleAll = () => {
+          for (let i = 0; i < count; i++) setCell(i, randomGlyph(pool));
+        };
+        // Resolve every cell to its real glyph (the finished state).
+        const resolveAll = () => {
+          for (let i = 0; i < count; i++) setCell(i, original[i]);
+        };
 
-    const animate = (now: number) => {
-      const elapsed = now - startTimeRef.current;
-      const t = Math.min(1, elapsed / duration);
-      const resolvedCount = Math.floor(length * ease(t));
+        const proxy = { p: 0 };
+        let frame = 0;
 
-      for (let i = 0; i < length; i++) {
-        const targetIndex = shuffle ? indices[i] : i;
-        const original = originalUnits[targetIndex];
+        const tl = gsap.timeline({ paused: true, onComplete: onDone });
+        // Prime the scramble at t=0 so a restart shows churn immediately (no
+        // flash of final text during the lead delay), then decode after `offset`.
+        tl.call(scrambleAll, [], 0);
+        tl.to(
+          proxy,
+          {
+            p: 1, // eased by `ease`, so `proxy.p` is the eased reveal progress
+            duration,
+            ease,
+            onUpdate: () => {
+              const revealed = Math.floor(count * proxy.p);
+              const roll = frame++ % churnEvery === 0;
+              for (let i = 0; i < count; i++) {
+                if (i < revealed) {
+                  setCell(i, original[i]); // head: resolved
+                } else if (roll) {
+                  setCell(i, randomGlyph(pool)); // tail: churning
+                }
+              }
+            },
+            onComplete: resolveAll, // guarantee exact final text
+          },
+          offsetRef.current,
+        );
+        tlRef.current = tl;
 
-        scrambled[targetIndex] =
-          i < resolvedCount
-            ? original
-            : shouldPreserve(original, mode)
-              ? original
-              : scrambleUnit(original.length, chars, mode);
-      }
+        // Replay every time the element scrolls into view, from either direction.
+        ScrollTrigger.create({
+          trigger: el,
+          start: scrollStart,
+          onEnter: () => tl.restart(),
+          onEnterBack: () => tl.restart(),
+        });
 
-      if (ref.current) {
-        ref.current.textContent = scrambled.join(joiner);
-      }
+        // Snap any in-flight scramble to final text before the print snapshot.
+        const onBeforePrint = () => tl.progress(1);
+        window.addEventListener("beforeprint", onBeforePrint);
 
-      if (t < 1) {
-        frameRef.current = requestAnimationFrame(animate);
-      } else {
-        if (ref.current) ref.current.textContent = originalText;
-        if (onDone) onDone();
-      }
-    };
+        return () => {
+          tlRef.current = null;
+          el.removeAttribute("role");
+          window.removeEventListener("beforeprint", onBeforePrint);
+        };
+      });
+    },
+    { scope: ref },
+  );
 
-    delayTimeoutRef.current = window.setTimeout(() => {
-      startTimeRef.current = performance.now();
-      frameRef.current = requestAnimationFrame(animate);
-    }, delay);
-  }, [ref]);
-
-  useEffect(() => {
-    if (optionsRef.current.autoPlay) {
-      trigger();
-    }
-
-    return () => {
-      if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
-      if (delayTimeoutRef.current !== null) clearTimeout(delayTimeoutRef.current);
-    };
-    // Intentionally mount-only: `trigger` is stable, and re-running on
-    // `options.autoPlay` flips would restart mid-scroll. The component
-    // wrapper handles re-trigger policy (e.g. on intersection).
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [trigger]);
-
-  return trigger;
+  // Null-safe, so it's inert under reduced-motion.
+  return useCallback(() => {
+    tlRef.current?.restart();
+  }, []);
 }
-
-// Helper to check if a unit should be preserved (whitespace)
-function shouldPreserve(unit: string, mode: ScrambleMode): boolean {
-  if (mode === "word") {
-    return /\s+/.test(unit); // entire whitespace chunk
-  }
-  return /^\s$/.test(unit); // single whitespace char
-}
-
-function scrambleUnit(length: number, chars: string, mode: ScrambleMode): string {
-  return Array.from({ length })
-    .map(() => randomChar(chars))
-    .join(mode === "word" ? "" : "");
-}
-
-function randomChar(chars: string): string {
-  return chars[Math.floor(Math.random() * chars.length)];
-}
-
-const EASING_PRESETS: Record<string, (t: number) => number> = {
-  linear: (t) => t,
-  easeInQuad: (t) => t * t,
-  easeOutQuad: (t) => t * (2 - t),
-  easeInOutQuad: (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t),
-  easeInOut: (t) => (t < 0.5 ? 0.5 * (2 * t) ** 3 : 0.5 * ((2 * (t - 1)) ** 3 + 2)),
-  easeOutCubic: (t) => 1 - (1 - t) ** 3,
-  easeOutExpo: (t) => (t === 1 ? 1 : 1 - 2 ** (-10 * t)),
-};

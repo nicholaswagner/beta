@@ -1,0 +1,52 @@
+/* A full-width horizontal rule of repeated monospace glyphs that scramble-decode
+   left→right. The wrapper (`.rule`) is the measured, clipped block; the glyph run
+   (`.line`) is positioned absolutely inside it.
+
+   Why absolute? The run is `white-space: nowrap` and intentionally over-filled
+   past the wrapper width (clipped by `overflow: hidden`). If it stayed in flow,
+   that long line would feed its own min-content width back into a flex/grid
+   ancestor that sizes to content — and since the fill count is *measured* from
+   the wrapper width, that's a runaway loop (wider -> more glyphs -> wider, until
+   the page blows out to tens of thousands of px). Taking the run out of flow
+   makes the wrapper width purely parent-driven, so the measurement is stable.
+   Font here must match the site's `--font-mono` so the measurement probe sizes
+   glyphs correctly. */
+.rule {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 1em;
+  /* inner run is out of flow, so reserve one line of height here */
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2);
+  line-height: 1;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+/* The glyph run: out of flow (see above), clipped to the wrapper's box. GSAP
+   grows its text left→right as the decode wavefront advances. */
+.line {
+  position: absolute;
+  inset: 0;
+  white-space: nowrap;
+  color: var(--gray-5);
+}
+
+/* Print fallback. When a separator lives inside a screen-hidden, print-only
+   block (e.g. CVLayout's print "About" header), it's measured while the block
+   is `display:none`, so its width is 0, the glyph count is 0, and it renders no
+   `.line` run at all — an empty `.rule`. `beforeprint` then has nothing to snap,
+   so the divider is simply absent on paper. Collapse the empty wrapper to a
+   plain hairline so the rule still prints. `:empty` matches *only* that
+   count===0 case: once any glyphs render there's a `.line` child, so visible
+   separators (which fill via the beforeprint snap) keep their scrambled run.
+   A border is used rather than a background because backgrounds are dropped by
+   default in print, borders are not. */
+@media print {
+  .rule:empty {
+    height: 0;
+    border-top: 1px solid var(--gray-5);
+  }
+}
