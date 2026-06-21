@@ -1,7 +1,7 @@
 # AI Generated Readme.md
 
 A personal site whose content is sourced from an Obsidian vault, rendered by
-[Fumadocs Core], shelled in [Radix Themes], served as a static SPA on
+[Fumadocs Core], wrapped in [Radix Themes], served as a static SPA on
 [React Router] + [Bun], deployed to GitHub Pages under
 `nicholaswagner.dev/beta`.
 
@@ -68,7 +68,7 @@ will be evaluated on a case by case basis.
 
 React Router intercepts in-page `<a href="#...">` clicks and updates the URL
 via `history.pushState`, which bypasses the browser's native fragment scroll.
-[`useHashScroll`](app/layouts/DocsShell.tsx) watches `useLocation().hash` and
+[`useHashScroll`](app/layouts/DocsLayout.tsx) watches `useLocation().hash` and
 calls `scrollIntoView` explicitly.
 
 ### Stable MDX components

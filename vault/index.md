@@ -87,6 +87,6 @@ A bullet list
 - Content lives in `./vault/`.
 - `bun run generate` converts it into MDX under `./content/` and assets into `./public/`.
 - Rendered by **Fumadocs Core** + **React Router** as a static SPA on **Bun**.
-- Shelled in **Radix Themes**.
+- Wrapped in **Radix Themes**.
 
 ---

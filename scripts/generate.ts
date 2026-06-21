@@ -1,6 +1,31 @@
+import { readdir, rm } from "node:fs/promises";
+import { join } from "node:path";
+
 import { fromVault } from "fumadocs-obsidian";
 
 import { synthesizeFolderIndexes } from "./synthesizeFolderIndexes";
+
+// `fromVault` only writes/overwrites files — it never deletes. So a file
+// removed from the vault would leave an orphaned copy behind. Wipe the
+// generated output dirs first so each run is a clean mirror of the vault.
+// Keep-files (.gitkeep/.nojekyll) are preserved so the dirs stay tracked.
+const KEEP = new Set([".gitkeep", ".nojekyll"]);
+
+async function cleanDir(dir: string) {
+  let entries: string[];
+  try {
+    entries = await readdir(dir);
+  } catch {
+    return; // dir doesn't exist yet — nothing to clean
+  }
+  await Promise.all(
+    entries
+      .filter((name) => !KEEP.has(name))
+      .map((name) => rm(join(dir, name), { recursive: true, force: true })),
+  );
+}
+
+await Promise.all([cleanDir("content"), cleanDir("public")]);
 
 await fromVault({
   dir: "vault",

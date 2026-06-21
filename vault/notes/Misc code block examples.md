@@ -114,8 +114,8 @@ export function getMDXComponents(extra?: MDXComponents): MDXComponents {
 │   │       │   └── ThemeToggle.tsx
 │   │       └── ThemeContext.tsx
 │   ├── layouts
-│   │   ├── DocsShell.tsx
-│   │   └── LandingShell.tsx
+│   │   ├── DocsLayout.tsx
+│   │   └── LandingLayout.tsx
 │   ├── lib
 │   │   ├── mdx-callout-builders.tsx
 │   │   ├── mdx-components.tsx
