@@ -1,0 +1,10 @@
+.siteNav {
+  flex: 1;
+  height: var(--space-9);
+  transition: var(--transition-stuff);
+  align-items: center;
+
+  @media print {
+    display: none;
+  }
+}

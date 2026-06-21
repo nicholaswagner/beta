@@ -7,15 +7,18 @@ import {
   type MetaFunction,
 } from "react-router";
 
-import { CVShell, type CVLink, type ExperienceItem } from "~/layouts/CVShell";
+import { CVLayout, type CVLink, type ExperienceItem } from "~/layouts/cv/CVLayout";
 import { mdxComponents } from "~/lib/mdxComponents";
 import { getExperiencePages, source } from "~/lib/source";
 
 interface CVIndexData {
   name?: string;
   subtitle?: string;
-  blurb?: string;
   links?: CVLink[];
+  /** Compiled MDX body of the page (the bio prose), same shape as the
+   *  experience pages' `body`. Rendered as a component so inline JSX in the
+   *  markdown — e.g. `<ScrambleText>` — resolves to real components. */
+  body: ExperienceItem["Body"];
 }
 
 export async function clientLoader(_args: ClientLoaderFunctionArgs) {
@@ -24,7 +27,14 @@ export async function clientLoader(_args: ClientLoaderFunctionArgs) {
     throw data({ message: "No /cv index page found" }, { status: 404 });
   }
 
-  const fm = indexPage.data as CVIndexData;
+  const fm = indexPage.data as unknown as CVIndexData;
+
+  // The bio is the page's markdown body, compiled to a component (not the
+  // `getText("processed")` string). Rendering it through `mdxComponents` lets
+  // inline tags in vault/cv/index.md — e.g. `<ScrambleText>Nicholas Wagner
+  // </ScrambleText>` — render as actual components instead of literal text.
+  const Blurb = fm.body;
+
   const experience: ExperienceItem[] = getExperiencePages().map((p) => {
     const d = p.data as unknown as ExperienceItem & { body: ExperienceItem["Body"] };
     return {
@@ -41,7 +51,7 @@ export async function clientLoader(_args: ClientLoaderFunctionArgs) {
   return {
     name: fm.name ?? "Nicholas Wagner",
     subtitle: fm.subtitle ?? "Software Engineer",
-    blurb: fm.blurb ?? "",
+    Blurb,
     links: fm.links ?? [],
     experience,
   };
@@ -55,13 +65,13 @@ export const meta: MetaFunction<typeof clientLoader> = ({ data }) => {
   ];
 };
 
-export default function CV() {
-  const { name, subtitle, blurb, links, experience } = useLoaderData<typeof clientLoader>();
+export default function CVRoute() {
+  const { name, subtitle, Blurb, links, experience } = useLoaderData<typeof clientLoader>();
   return (
-    <CVShell
+    <CVLayout
       name={name}
       subtitle={subtitle}
-      blurb={blurb}
+      Blurb={Blurb}
       links={links}
       experience={experience}
       mdxComponents={mdxComponents}

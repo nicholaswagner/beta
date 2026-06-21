@@ -12,8 +12,9 @@ import {
 import type { MDXComponents } from "mdx/types";
 import type { ComponentPropsWithoutRef } from "react";
 import { Link as RouterLink } from "react-router";
+import { TerminalSeparator } from "~/components/ui/TerminalSeparator/TerminalSeparator";
 
-import { ScrambleText } from "~/components/ui/ScrambleText";
+import { ScrambleText } from "~/components/mdx/ScrambleText/ScrambleText";
 import { Mermaid } from "~/lib/mdxMermaidComponent";
 import {
   buildCallout,
@@ -108,12 +109,12 @@ export function getMDXComponents(extra?: MDXComponents): MDXComponents {
     ),
     Quote,
     Flex,
-    Separator,
+    // Separator,
     Callout: buildCallout,
     ObsidianCallout: buildObsidianCallout,
     ObsidianCalloutTitle: buildObsidianCalloutTitle,
     ObsidianCalloutBody: buildObsidianCalloutBody,
-
+    TerminalSeparator,
     // Custom components reachable from vault `.md` as bare JSX, e.g.
     // `<ScrambleText>headline</ScrambleText>`. PascalCase is required for
     // the MDX parser to treat them as components rather than HTML tags.

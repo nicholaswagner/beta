@@ -3,9 +3,12 @@ import { PanelRightOpen, PanelRightClose } from "lucide-react";
 import { useState } from "react";
 
 import { NW } from "./NW";
-import { useTheme } from "./ThemeContext";
-import { BreadCrumbs } from "./BreadCrumbs/BreadCrumbs";
-import { ThemeToggle } from "./ThemeToggle/ThemeToggle";
+import { useTheme } from "../../ThemeContext";
+import { BreadCrumbs } from "../BreadCrumbs/BreadCrumbs";
+import { ThemeToggle } from "../ThemeToggle/ThemeToggle";
+
+import styles from "./SiteNav.module.css";
+
 
 interface SiteNavProps {
   isSidebarOpen?: boolean;
@@ -42,31 +45,18 @@ export const SiteNav = ({ isSidebarOpen, onToggleSidebar }: SiteNavProps = {}) =
 
   return (
     <Flex
-      direction="row"
       justify="between"
-      align="center"
-      mt={{ initial: "2" }}
-      py={{ initial: "1" }}
-      px={{ initial: "6" }}
-      style={{
-        transition: "var(--transition-stuff)",
-        // backgroundColor: "var(--accent-2)",
-        height: "4rem",
-        width: "100%",
-        // position: "sticky",
-        // left: 0,
-        // top: 0,
-        // zIndex: 5,
-      }}
+      px={{ initial: "4", sm: "6", lg: "8" }}
+      className={styles.siteNav}
     >
       <Flex align="center" gapX={{ initial: "6" }}>
-        <Link href="/beta/" target="_self">
+        <Link href="/beta/" target="_self" aria-label="Home">
           <NW
             style={{
-              color: "var(--accent-11)",
               height: "auto",
               width: "3rem",
             }}
+            variant="chonky"
             className="nwLink"
           />
         </Link>
@@ -78,6 +68,6 @@ export const SiteNav = ({ isSidebarOpen, onToggleSidebar }: SiteNavProps = {}) =
         {isSidebarOpen !== undefined && onToggleSidebar && <HamburgerButton onToggle={onToggleSidebar} isOpen={isSidebarOpen} />}
 
       </Flex>
-    </Flex>
+    </Flex >
   );
 };

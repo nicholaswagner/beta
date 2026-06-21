@@ -4,12 +4,12 @@ import type { TOCItemType } from "fumadocs-core/toc";
 import { useEffect, type ReactNode } from "react";
 import { useLocation } from "react-router";
 
-import { SiteNav } from "~/components/ui/SiteNav";
+import { SiteNav } from "~/components/ui/SiteNav/SiteNav";
 
 import { Sidebar } from "../components/ui/Sidebar/Sidebar";
 import { DocsTOC } from "../components/TOC";
 
-interface LandingShellProps {
+interface LandingLayoutProps {
   pageTree?: PageTree.Root;
   toc?: TOCItemType[];
   title?: string;
@@ -36,7 +36,7 @@ function useHashScroll() {
   }, [hash]);
 }
 
-export function LandingShell({ pageTree, toc, title, children }: LandingShellProps) {
+export function LandingLayout({ pageTree, toc, title, children }: LandingLayoutProps) {
   useHashScroll();
   return (
     <Container size="4" py="4">

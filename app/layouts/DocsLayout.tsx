@@ -4,13 +4,13 @@ import type { TOCItemType } from "fumadocs-core/toc";
 import { useEffect, useState, type ReactNode } from "react";
 import { useLocation } from "react-router";
 
-import { SiteNav } from "~/components/ui/SiteNav";
+import { SiteNav } from "~/components/ui/SiteNav/SiteNav";
 
 import { Sidebar } from "../components/ui/Sidebar/Sidebar";
 import { SidebarDrawer } from "../components/ui/Sidebar/SidebarDrawer";
 import { DocsTOC } from "../components/TOC";
 
-interface DocsShellProps {
+interface DocsLayoutProps {
   pageTree: PageTree.Root;
   toc: TOCItemType[];
   title: string;
@@ -33,7 +33,7 @@ function useHashScroll() {
   }, [hash]);
 }
 
-export function DocsShell({ pageTree, toc, title, children }: DocsShellProps) {
+export function DocsLayout({ pageTree, toc, title, children }: DocsLayoutProps) {
   useHashScroll();
   const { pathname } = useLocation();
   const [drawerOpen, setDrawerOpen] = useState(false);

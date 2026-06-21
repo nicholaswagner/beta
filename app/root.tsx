@@ -10,7 +10,7 @@ import {
   useRouteError,
 } from "react-router";
 
-import { ThemeProvider } from "./components/ui/ThemeContext";
+import { ThemeProvider } from "./components/ThemeContext";
 import "@radix-ui/themes/styles.css";
 import "fumadocs-ui/style.css";
 
@@ -32,7 +32,7 @@ export function Layout({ children }: { children: ReactNode }) {
         <ScrollRestoration />
         <Scripts />
       </body>
-    </html>
+    </html >
   );
 }
 

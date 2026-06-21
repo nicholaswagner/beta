@@ -1,5 +1,5 @@
 import { Suspense, use, useEffect, useId, useState } from 'react';
-import { useTheme } from '~/components/ui/ThemeContext';
+import { useTheme } from '~/components/ThemeContext';
 
 /**
  * Wrapper that defers rendering until after first paint (mermaid needs the

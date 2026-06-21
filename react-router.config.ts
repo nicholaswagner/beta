@@ -9,7 +9,7 @@ import type { Config } from "@react-router/dev/config";
  * we go pure SPA and rely on a 404→index.html copy as the deep-link fallback
  * (configured in the build script + deploy workflow).
  *
- * Trade-off: crawlers see the SPA shell for every URL until JS runs. Refresh
+ * Trade-off: crawlers see the SPA's bootstrap HTML for every URL until JS runs. Refresh
  * and deep-links work for real users.
  *
  * `basename` must start with Vite's `base` (RR enforces this in dev). Both

@@ -81,7 +81,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const themeProps: ThemeProps = {
     appearance: colorScheme,
     // accentColor: "pink",
-    accentColor: accentColors[Math.floor(Math.random() * accentColors.length - 1)],
+    accentColor: accentColors[Math.floor(Math.random() * accentColors.length)],
     grayColor: "auto",
     panelBackground: "translucent",
     scaling: "95%",
@@ -90,10 +90,10 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
   return (
     <ThemeContext.Provider value={{ theme: colorScheme, themeProps, setTheme, toggleTheme }}>
-      <Theme
+      <Theme className="glow"
         appearance={colorScheme}
         accentColor={
-          accentColors[Math.floor(Math.random() * accentColors.length - 1)]
+          accentColors[Math.floor(Math.random() * accentColors.length)]
         }
         // accentColor="pink"
         grayColor="auto"

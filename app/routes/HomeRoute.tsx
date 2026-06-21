@@ -1,22 +1,20 @@
 import {
-  data,
   isRouteErrorResponse,
   useLoaderData,
   useRouteError,
+  data,
   type ClientLoaderFunctionArgs,
   type MetaFunction,
 } from "react-router";
 
-import { DocsShell } from "~/layouts/DocsShell";
+import { LandingLayout } from "~/layouts/LandingLayout";
 import { mdxComponents } from "~/lib/mdxComponents";
-import { getNotesTree, source } from "~/lib/source";
+import { source } from "~/lib/source";
 
-export async function clientLoader({ params }: ClientLoaderFunctionArgs) {
-  const splat = params["*"] ?? "";
-  const slugs = splat.split("/").filter(Boolean);
-  const page = source.getPage(slugs);
+export async function clientLoader(_args: ClientLoaderFunctionArgs) {
+  const page = source.getPage([]);
   if (!page) {
-    throw data({ message: `No page at /${splat}` }, { status: 404 });
+    throw data({ message: "No index page found" }, { status: 404 });
   }
   return {
     title: page.data.title,
@@ -35,23 +33,23 @@ export const meta: MetaFunction<typeof clientLoader> = ({ data }) => {
   ];
 };
 
-export default function Page() {
+export default function HomeRoute() {
   const { title, Body, toc } = useLoaderData<typeof clientLoader>();
   return (
-    <DocsShell pageTree={getNotesTree()} toc={toc} title={title}>
+    // <LandingLayout pageTree={source.pageTree} toc={toc} title={title}>
+    <LandingLayout>
       <Body components={mdxComponents} />
-    </DocsShell>
+    </LandingLayout>
   );
 }
 
 export function ErrorBoundary() {
   const error = useRouteError();
-  if (isRouteErrorResponse(error) && error.status === 404) {
-    return (
-      <DocsShell pageTree={getNotesTree()} toc={[]} title="Not found">
-        <p>This page does not exist.</p>
-      </DocsShell>
-    );
-  }
-  throw error;
+  return (
+    <LandingLayout pageTree={source.pageTree} toc={[]} title="Error">
+      <pre>
+        {isRouteErrorResponse(error) ? `${error.status} ${error.statusText}` : String(error)}
+      </pre>
+    </LandingLayout>
+  );
 }

@@ -7,16 +7,16 @@ import {
   type MetaFunction,
 } from "react-router";
 
-import { NotesShell } from "~/layouts/NotesShell";
+import { DocsLayout } from "~/layouts/DocsLayout";
 import { mdxComponents } from "~/lib/mdxComponents";
 import { getNotesTree, source } from "~/lib/source";
 
 export async function clientLoader({ params }: ClientLoaderFunctionArgs) {
   const splat = params["*"] ?? "";
-  const slugs = ["notes", ...splat.split("/").filter(Boolean)];
+  const slugs = splat.split("/").filter(Boolean);
   const page = source.getPage(slugs);
   if (!page) {
-    throw data({ message: `No page at /notes/${splat}` }, { status: 404 });
+    throw data({ message: `No page at /${splat}` }, { status: 404 });
   }
   return {
     title: page.data.title,
@@ -35,12 +35,12 @@ export const meta: MetaFunction<typeof clientLoader> = ({ data }) => {
   ];
 };
 
-export default function NotesPage() {
+export default function PageRoute() {
   const { title, Body, toc } = useLoaderData<typeof clientLoader>();
   return (
-    <NotesShell pageTree={getNotesTree()} toc={toc} title={title}>
+    <DocsLayout pageTree={getNotesTree()} toc={toc} title={title}>
       <Body components={mdxComponents} />
-    </NotesShell>
+    </DocsLayout>
   );
 }
 
@@ -48,9 +48,9 @@ export function ErrorBoundary() {
   const error = useRouteError();
   if (isRouteErrorResponse(error) && error.status === 404) {
     return (
-      <NotesShell pageTree={getNotesTree()} toc={[]} title="Not found">
-        <p>This note does not exist.</p>
-      </NotesShell>
+      <DocsLayout pageTree={getNotesTree()} toc={[]} title="Not found">
+        <p>This page does not exist.</p>
+      </DocsLayout>
     );
   }
   throw error;

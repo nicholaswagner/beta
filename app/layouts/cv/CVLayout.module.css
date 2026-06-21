@@ -9,12 +9,13 @@
  *   - `.experienceList` print-only page-break guard on its child `<li>`s
  */
 
-.cvShell {
-  /* Token rescale is scoped to `.cvShell` *on purpose* — printing /notes/*
+.cvLayout {
+
+  /* Token rescale is scoped to `.cvLayout` *on purpose* — printing /notes/*
      or /index should not pick up the 0.75x shrink. The original site applies
      it globally on `.radix-themes`; we intentionally diverge. */
   @media print {
-    --scaling: 0.75;
+    --scaling: 1;
     --font-size-1: calc(8px * var(--scaling));
     --font-size-2: calc(10px * var(--scaling));
     --font-size-3: calc(12px * var(--scaling));
@@ -56,6 +57,7 @@
 
 .printable {
   display: none;
+
   @media print {
     display: flex;
   }
@@ -63,12 +65,14 @@
 
 .notPrintable {
   display: flex;
+
   @media print {
     display: none;
   }
 }
 
 .experienceList {
+
   /* Keeps page-break behavior tight so a role's bullets don't split
      mid-list when printing. Bullet typography itself comes from the
      global `mdxComponents` mapping. */
@@ -89,6 +93,30 @@
 
 .experienceSeparator {
   background-color: var(--gray-5);
+}
+
+.scrambleLink {
+  color: var(--grey-12);
+
+  @media print {
+    color: var(--gray-12);
+
+    svg {
+      display: none !important;
+    }
+  }
+
+  /* background-color: var(--color-background); */
+  /* color: var(--color-background); */
+  /* background-color: var(--accent-11); */
+  /* padding-left: 1em; */
+  /* padding-right: 1em; */
+  /* padding-top: .1em; */
+  /* padding-bottom: .1em; */
+
+  &:hover {
+    color: var(--accent-9);
+  }
 }
 
 /* Hint to the print engine: don't put a page break immediately after this
@@ -141,12 +169,14 @@
 }
 
 @media print {
+
   /* The left bio/links column is hidden by `.notPrintable` (a duplicate of
      its contents is emitted as a print-only footer below the experience
      section), so the experience column can claim the full page width. */
-  .cvLayoutRow > .rightCol {
+  .cvLayoutRow>.rightCol {
     width: 100% !important;
   }
+
   /* Inner role-meta/bullets row stays a row, with a 30/70 split so the
      role-meta column never collapses to full-width just because the print
      viewport sits below the `lg` Radix breakpoint where the row widths
@@ -155,10 +185,12 @@
   .roleInner {
     flex-direction: row !important;
   }
-  .roleInner > *:first-child {
+
+  .roleInner>*:first-child {
     width: 30% !important;
   }
-  .roleInner > *:nth-child(2) {
+
+  .roleInner>*:nth-child(2) {
     width: 70% !important;
     margin-top: 0 !important;
   }
@@ -168,17 +200,19 @@
    Kept whole across page breaks; small breathing room above. */
 .printFooter {
   flex-direction: column !important;
-  margin-top: var(--space-6);
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-6);
   break-inside: avoid;
 }
 
 /* Page-level print resets — no transitions, full bleed. Scoped via descendant
    selector so they only fire when this wrapper is in the tree. */
 @media print {
-  .cvShell {
+  .cvLayout {
     transition: none;
   }
-  .cvShell * {
+
+  .cvLayout * {
     transition: none !important;
   }
 }
@@ -186,7 +220,7 @@
 /* ---------- @page paper sizing -----------------------------------------------
 
    Named-page rule: only elements that opt in via `page: cv-page` use these
-   dimensions. `.cvShell` sets that property below — so this rule only fires
+   dimensions. `.cvLayout` sets that property below — so this rule only fires
    when the user prints from `/cv`. Printing `/notes/...` keeps the browser
    default (typically the OS print-dialog selection).
 
@@ -198,6 +232,6 @@
   margin: 12mm;
 }
 
-.cvShell {
+.cvLayout {
   page: cv-page;
 }
